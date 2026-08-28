@@ -17,11 +17,11 @@
     .side-content { position:relative; z-index:1; display:flex; flex-direction:column; gap:8px; } .brand { display:flex; align-items:center; gap:11px; font:500 11px var(--font-small); letter-spacing:.12em; }
     .brand-mark { width:28px; height:28px; border:3px solid var(--red); border-radius:50%; position:relative; }.brand-mark:after { content:""; position:absolute; inset:6px; background:var(--red); border-radius:50%; }
     h1,h2,h3,.consensus-title,.send { font-family:var(--font-big); font-weight:700; text-transform:none; } h1 { margin:4px 0; font-family:var(--font-accent); font-size:35px; line-height:.78; letter-spacing:.025em; } .subtitle { margin:0; font:10px/1.35 var(--font-small); letter-spacing:.04em; max-width:205px; }
-    .module { display:flex; flex-direction:column; align-items:flex-start; gap:12px; }
-    .module-top { display:flex; justify-content:space-between; align-items:flex-start; width:var(--input-col-width,322px); border-bottom:3px solid var(--border-module); padding-bottom:15px; }
-    .settings-col { display:flex; flex-direction:column; align-items:flex-end; gap:12px; }
+    .module { display:flex; flex-direction:column; align-items:center; gap:12px; }
+    .module-top { display:flex; justify-content:space-between; align-items:flex-start; width:100%; border-bottom:3px solid var(--border-module); padding-bottom:15px; }
+    .settings-col { display:grid; grid-template-columns:auto auto; align-items:center; gap:12px 15px; }
     textarea { width:var(--input-col-width,322px); min-height:70px; resize:vertical; border:3px solid var(--border-input); border-radius:0; padding:10px; background:var(--bg-input); color:var(--paper); font:12px/1.35 var(--font-small); outline:none; } textarea:focus { box-shadow:4px 4px 0 var(--red); }
-    .settings { display:grid; gap:8px; }.setting { display:flex; justify-content:space-between; align-items:center; gap:8px; font:10px var(--font-small); }.choice { width:140px; flex-shrink:0; border:3px solid var(--border-input); padding:5px 7px; background:var(--bg-input); color:var(--paper); font:inherit; }
+    .setting { display:flex; justify-content:space-between; align-items:center; gap:8px; font:10px var(--font-small); }.choice { width:140px; flex-shrink:0; border:3px solid var(--border-input); padding:5px 7px; background:var(--bg-input); color:var(--paper); font:inherit; }
     button { border:0; cursor:pointer; letter-spacing:.08em; }.send { width:var(--input-col-width,322px); padding:14px 11px; background:var(--red); color:var(--ink); font-size:11px; transition:.18s; }.send:hover { background:var(--send-hover); transform:translateY(-2px); }.send:disabled { opacity:.55; cursor:wait; }
     .readout { width:168px; flex-shrink:0; margin:0; padding:10px; border-left:4px solid var(--red); background:var(--bg-input); font:9px/1.45 var(--font-small); }
     main { grid-row:1; position:relative; padding:12px clamp(22px,4vw,64px) 16px; background:var(--bg-main); overflow:hidden; }
@@ -80,7 +80,7 @@
     .consensus-body.revealing:before{content:"";position:absolute;top:3px;bottom:3px;left:calc(3px - var(--sweep-px,712px));width:calc(100% - 6px + var(--sweep-px,712px));background:repeating-linear-gradient(40deg,var(--ink) 0 23.33px,rgba(var(--triangle-rgb),.4) 23.33px 46.67px);background-size:46.67px 46.67px;animation:stripeSweep .3s linear 1 forwards;}
     .consensus-body.revealing p,.consensus-body.revealing .confidence{visibility:hidden;}
     @keyframes stripeSweep{from{transform:translateX(0);}to{transform:translateX(var(--sweep-px,712px));}}
-    .empty { opacity:.66; }.hidden { display:none; } @media (max-width:850px){ .module-top{flex-direction:column;align-items:flex-start;width:100%;gap:12px;border-bottom-width:2px}.settings-col{align-items:flex-start}textarea,.send{width:100%}.agents{width:100%;grid-template-columns:1fr;grid-template-areas:"crown" "left" "right";row-gap:56px}.agent.top,.agent.left,.agent.right{width:100%;min-height:185px;justify-self:stretch;transform:none}.magi-links,.magi-core,.baybayin,.wing-readout{display:none}.consensus{width:100%;grid-template-columns:1fr} }
+    .empty { opacity:.66; }.hidden { display:none; } @media (max-width:850px){ .module-top{flex-direction:column;align-items:flex-start;width:100%;gap:12px;border-bottom-width:2px}.settings-col{grid-template-columns:1fr;width:100%}textarea,.send{width:100%}.agents{width:100%;grid-template-columns:1fr;grid-template-areas:"crown" "left" "right";row-gap:56px}.agent.top,.agent.left,.agent.right{width:100%;min-height:185px;justify-self:stretch;transform:none}.magi-links,.magi-core,.baybayin,.wing-readout{display:none}.consensus{width:100%;grid-template-columns:1fr} }
   </style>
 </head>
 <body>
@@ -89,7 +89,7 @@
     <div class="module">
       <div class="module-top">
         <div class="terminal-desc"><div class="brand"><i class="brand-mark"></i> MOGI SYSTEM / β-01</div><h1>TERMINAL</h1><p class="subtitle">THREE MINDS. ONE VERDICT.<br>OPERATING INDEPENDENTLY.</p></div>
-        <div class="settings-col"><div class="settings"><div class="setting">DECISION MODE <select class="choice" id="mode"><option>Balanced</option><option>Cautious</option><option>Decisive</option></select></div><div class="setting">INTELLIGENCE <select class="choice" id="engine"><option value="local">LOCAL LLM</option><option value="demo" selected>DEMO MODE</option></select></div><label class="setting" id="modelLine">LOCAL MODEL <input class="choice" id="model" value="qwen2.5:3b" aria-label="Local model name" /></label></div><div class="readout" id="readout">AWAITING INQUIRY<br>ALL THREE MAGI ONLINE</div></div>
+        <div class="settings-col"><div class="setting">DECISION MODE <select class="choice" id="mode"><option>Balanced</option><option>Cautious</option><option>Decisive</option></select></div><div class="readout" id="readout">AWAITING INQUIRY<br>ALL THREE MAGI ONLINE</div><div class="setting">INTELLIGENCE <select class="choice" id="engine"><option value="local">LOCAL LLM</option><option value="demo" selected>DEMO MODE</option></select></div><label class="setting" id="modelLine">LOCAL MODEL <input class="choice" id="model" value="qwen2.5:3b" aria-label="Local model name" /></label></div>
       </div>
       <button class="send" id="submit">INITIALIZE CONSULTATION</button><textarea id="query" placeholder="e.g. Should I take a job offer that pays more but has a longer commute?">Should I take a job offer that pays more but has a longer commute?</textarea>
     </div></div></aside>
