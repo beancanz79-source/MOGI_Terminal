@@ -6,7 +6,7 @@
   <title>MOGI / Terminal</title>
   <style>
     @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&display=swap');
-    :root { --ink:#101110; --paper:#F76C1B; --line:#F76C1B; --red:#F76C1B; --rust:#2f6843; --amber:#F76C1B; --cyan:#F76C1B; --triangle:#F76C1B; --triangle-rgb:247,108,27; --muted:#F76C1B; --box-idle:#79ED92; --box-idle-rgb:121,237,146; --box-hover:#A8F3B8; --box-hover-rgb:168,243,184; --bg-body:#090A09; --bg-aside:#0E0F0D; --bg-input:#161715; --bg-main:#0B0C0B; --border-input:#F76C1B; --border-module:#F76C1B; --border-topbar:#F76C1B; --text-status:#F76C1B; --send-hover:#e5c54d; --consensus-tint-rgb:53,226,173; --font-big:'Helvetica Neue',Helvetica,Arial,sans-serif; --font-small:'IBM Plex Mono',monospace; --font-accent:'Georgia Pro Condensed',Georgia,serif; }
+    :root { --ink:#101110; --paper:#F76C1B; --line:#F76C1B; --red:#F76C1B; --rust:#2f6843; --amber:#F76C1B; --cyan:#F76C1B; --triangle:#F76C1B; --triangle-rgb:247,108,27; --muted:#F76C1B; --box-idle:#79ED92; --box-idle-rgb:121,237,146; --box-hover:#A8F3B8; --box-hover-rgb:168,243,184; --bg-body:#090A09; --bg-aside:#0E0F0D; --bg-input:#161715; --bg-main:#0B0C0B; --border-input:#F76C1B; --border-module:#F76C1B; --border-topbar:#F76C1B; --text-status:#F76C1B; --send-hover:#FFCC33; --consensus-tint-rgb:53,226,173; --font-big:'Helvetica Neue',Helvetica,Arial,sans-serif; --font-small:'IBM Plex Mono',monospace; --font-accent:'Georgia Pro Condensed',Georgia,serif; }
     * { box-sizing:border-box; } html{filter:blur(.07px);} body { margin:0; min-height:100vh; background:var(--bg-body); color:var(--paper); font-family:var(--font-small); }
     .edge-blur{position:fixed;inset:0;z-index:9997;pointer-events:none;backdrop-filter:blur(.4px);-webkit-backdrop-filter:blur(.4px);mask-image:radial-gradient(ellipse 60% 60% at 50% 50%,transparent 0%,black 100%);-webkit-mask-image:radial-gradient(ellipse 60% 60% at 50% 50%,transparent 0%,black 100%);}
     body:before{content:"";position:fixed;inset:0;z-index:9999;pointer-events:none;background:radial-gradient(ellipse 75% 75% at 50% 50%,transparent 60%,rgba(0,0,0,.18) 100%);}
@@ -16,14 +16,15 @@
     aside:after { content:""; }
     .side-content { position:relative; z-index:1; display:flex; flex-direction:column; gap:8px; } .brand { display:flex; align-items:center; gap:11px; font:500 11px var(--font-small); letter-spacing:.12em; }
     .brand-mark { width:28px; height:28px; border:3px solid var(--red); border-radius:50%; position:relative; }.brand-mark:after { content:""; position:absolute; inset:6px; background:var(--red); border-radius:50%; }
-    h1,h2,h3,.consensus-title,.send { font-family:var(--font-big); font-weight:700; text-transform:none; } h1 { margin:4px 0; font-family:var(--font-accent); font-size:35px; line-height:.78; letter-spacing:.025em; } .subtitle { margin:0; font:10px/1.35 var(--font-small); letter-spacing:.04em; max-width:205px; }
-    .module { display:flex; flex-direction:column; align-items:center; gap:12px; }
-    .module-top { display:flex; justify-content:space-between; align-items:flex-start; width:100%; border-bottom:3px solid var(--border-module); padding-bottom:15px; }
-    .settings-col { display:grid; grid-template-columns:auto auto; align-items:center; gap:12px 15px; }
+    h1,h2,h3,.consensus-title,.send { font-family:var(--font-big); font-weight:700; text-transform:none; } h1 { margin:9px 0; font-family:var(--font-accent); font-size:35px; line-height:.78; letter-spacing:.025em; } .subtitle { margin:0; font:10px/1.35 var(--font-small); letter-spacing:.04em; max-width:205px; }
+    .module { display:grid; grid-template-columns:auto auto auto; grid-template-areas:"desc input settings"; align-items:start; gap:15px 20px; width:100%; }
+    .terminal-desc { grid-area:desc; }
+    .input-col { grid-area:input; display:flex; flex-direction:column; gap:12px; justify-self:start; }
+    .settings-col { grid-area:settings; display:grid; grid-template-columns:auto auto; align-items:center; gap:12px 15px; }
     textarea { width:var(--input-col-width,322px); min-height:70px; resize:vertical; border:3px solid var(--border-input); border-radius:0; padding:10px; background:var(--bg-input); color:var(--paper); font:12px/1.35 var(--font-small); outline:none; } textarea:focus { box-shadow:4px 4px 0 var(--red); }
     .setting { display:flex; justify-content:space-between; align-items:center; gap:8px; font:10px var(--font-small); }.choice { width:140px; flex-shrink:0; border:3px solid var(--border-input); padding:5px 7px; background:var(--bg-input); color:var(--paper); font:inherit; }
-    button { border:0; cursor:pointer; letter-spacing:.08em; }.send { width:var(--input-col-width,322px); padding:14px 11px; background:var(--red); color:var(--ink); font-size:11px; transition:.18s; }.send:hover { background:var(--send-hover); transform:translateY(-2px); }.send:disabled { opacity:.55; cursor:wait; }
-    .readout { width:168px; flex-shrink:0; margin:0; padding:10px; border-left:4px solid var(--red); background:var(--bg-input); font:9px/1.45 var(--font-small); }
+    button { border:0; cursor:pointer; letter-spacing:.08em; }.send { width:var(--input-col-width,322px); height:30.5px; display:flex; align-items:center; justify-content:center; padding:0 11px; background:var(--red); color:var(--ink); font-size:11px; transition:.18s; }.send:hover { background:var(--send-hover); transform:translateY(-2px); }.send:disabled { opacity:.55; cursor:wait; }
+    .readout { width:140px; flex-shrink:0; overflow:hidden; margin:0; padding:5px 7px; border-left:4px solid var(--red); background:var(--bg-input); font:7px/1.3 var(--font-small); }
     main { grid-row:1; position:relative; padding:12px clamp(22px,4vw,64px) 16px; background:var(--bg-main); overflow:hidden; }
     .top-rule{position:absolute;left:0;right:0;height:4px;background:var(--border-topbar);z-index:5;}
     .ambience-toggle{display:inline-flex;align-items:center;gap:8px;margin-left:15px;font:500 10px var(--font-small);letter-spacing:.16em;text-transform:uppercase;color:var(--amber);cursor:pointer;user-select:none;}
@@ -80,18 +81,16 @@
     .consensus-body.revealing:before{content:"";position:absolute;top:3px;bottom:3px;left:calc(3px - var(--sweep-px,712px));width:calc(100% - 6px + var(--sweep-px,712px));background:repeating-linear-gradient(40deg,var(--ink) 0 23.33px,rgba(var(--triangle-rgb),.4) 23.33px 46.67px);background-size:46.67px 46.67px;animation:stripeSweep .3s linear 1 forwards;}
     .consensus-body.revealing p,.consensus-body.revealing .confidence{visibility:hidden;}
     @keyframes stripeSweep{from{transform:translateX(0);}to{transform:translateX(var(--sweep-px,712px));}}
-    .empty { opacity:.66; }.hidden { display:none; } @media (max-width:850px){ .module-top{flex-direction:column;align-items:flex-start;width:100%;gap:12px;border-bottom-width:2px}.settings-col{grid-template-columns:1fr;width:100%}textarea,.send{width:100%}.agents{width:100%;grid-template-columns:1fr;grid-template-areas:"crown" "left" "right";row-gap:56px}.agent.top,.agent.left,.agent.right{width:100%;min-height:185px;justify-self:stretch;transform:none}.magi-links,.magi-core,.baybayin,.wing-readout{display:none}.consensus{width:100%;grid-template-columns:1fr} }
+    .empty { opacity:.66; }.hidden { display:none; } @media (max-width:850px){ .module{grid-template-columns:1fr;grid-template-areas:"desc" "settings" "input"}.settings-col{grid-template-columns:1fr;width:100%}.readout{width:100%;height:auto!important}textarea,.send{width:100%}.input-col{margin-left:0!important}.agents{width:100%;grid-template-columns:1fr;grid-template-areas:"crown" "left" "right";row-gap:56px}.agent.top,.agent.left,.agent.right{width:100%;min-height:185px;justify-self:stretch;transform:none}.magi-links,.magi-core,.baybayin,.wing-readout{display:none}.consensus{width:100%;grid-template-columns:1fr} }
   </style>
 </head>
 <body>
   <div class="edge-blur" aria-hidden="true"></div>
   <div class="shell"><aside><div class="side-content">
     <div class="module">
-      <div class="module-top">
         <div class="terminal-desc"><div class="brand"><i class="brand-mark"></i> MOGI SYSTEM / β-01</div><h1>TERMINAL</h1><p class="subtitle">THREE MINDS. ONE VERDICT.<br>OPERATING INDEPENDENTLY.</p></div>
-        <div class="settings-col"><div class="setting">DECISION MODE <select class="choice" id="mode"><option>Balanced</option><option>Cautious</option><option>Decisive</option></select></div><div class="readout" id="readout">AWAITING INQUIRY<br>ALL THREE MAGI ONLINE</div><div class="setting">INTELLIGENCE <select class="choice" id="engine"><option value="local">LOCAL LLM</option><option value="demo" selected>DEMO MODE</option></select></div><label class="setting" id="modelLine">LOCAL MODEL <input class="choice" id="model" value="qwen2.5:3b" aria-label="Local model name" /></label></div>
-      </div>
-      <button class="send" id="submit">INITIALIZE CONSULTATION</button><textarea id="query" placeholder="e.g. Should I take a job offer that pays more but has a longer commute?">Should I take a job offer that pays more but has a longer commute?</textarea>
+        <div class="input-col"><button class="send" id="submit">INITIALIZE CONSULTATION</button><textarea id="query" placeholder="e.g. Should I take a job offer that pays more but has a longer commute?">Should I take a job offer that pays more but has a longer commute?</textarea></div>
+      <div class="settings-col"><div class="setting">DECISION MODE <select class="choice" id="mode"><option>Balanced</option><option>Cautious</option><option>Decisive</option></select></div><div class="readout" id="readout">AWAITING INQUIRY<br>ALL THREE MAGI ONLINE</div><div class="setting">INTELLIGENCE <select class="choice" id="engine"><option value="local">LOCAL LLM</option><option value="demo" selected>DEMO MODE</option></select></div><label class="setting" id="modelLine"><input class="choice" id="model" value="qwen2.5:3b" aria-label="Local model name" /></label></div>
     </div></div></aside>
     <main><div class="top-rule" id="topRule"></div><div class="topbar"><div><div class="system">MOGI CORE // CONSULTATION NODE<label class="ambience-toggle" id="ambienceToggle"><input type="checkbox" id="ambienceCheckbox" checked>BACKGROUND PROCESSING</label></div><div class="status"><i class="pulse"></i> NEURAL PARTITIONS: STANDBY</div></div><div class="clock" id="clock">—<br><span>LOCAL SYSTEM TIME</span></div></div>
       <section class="agents" id="agents"><article class="agent top"><div class="agent-id">MOGI-01</div><h3><span class="frame" aria-hidden="true"></span>EC-31</h3><p class="tag">LOGICAL</p></article><article class="agent left"><div class="agent-id">MOGI-02</div><h3><span class="frame" aria-hidden="true"></span>RS-27</h3><p class="tag">RATIONAL</p></article><article class="agent right"><div class="agent-id">MOGI-03</div><h3><span class="frame" aria-hidden="true"></span>JM-21</h3><p class="tag">EMPIRICAL</p></article><div class="magi-links" aria-hidden="true"><span class="magi-line" id="lineL"></span><span class="magi-line" id="lineR"></span><span class="magi-line" id="lineB"></span></div><div class="magi-core" id="magiCore"><span class="word">MOGI</span><span class="rule"></span></div><div class="baybayin left" id="baybayinL" aria-hidden="true"><span class="line top"></span><span class="glyph">[ᜋ]ᜃᜊᜄᜓᜅ᜔ [ᜂ]ᜉᜒᜇᜐ᜔ᜌᜓᜅ᜔</span><span class="line bottom"></span></div><div class="baybayin right" id="baybayinR" aria-hidden="true"><span class="line top"></span><span class="glyph">[ᜄ᜔]ᜂᜋᜄᜊᜌ᜔ ᜐ [ᜁ]ᜐᜒᜉᜈ᜔</span><span class="line bottom"></span></div><div class="wing-readout" id="wingReadout" aria-hidden="true"><span id="wrConfidence">CONFIDENCE: —</span><span id="wrMode">DECISION MODE: BALANCED</span></div></section>
@@ -289,7 +288,23 @@
       const translateY=lAfterX.top-(topRectN.bottom-topV);
       top.style.transform=`translateY(${translateY}px)`;
       const base=host.getBoundingClientRect(),t=top.getBoundingClientRect(),l=left.getBoundingClientRect(),r=right.getBoundingClientRect();
-      document.documentElement.style.setProperty('--input-col-width',(r.right-l.left)+'px');
+      const inputTargetLeft=l.left,inputTargetRight=r.left+r.width/2;
+      document.documentElement.style.setProperty('--input-col-width',(inputTargetRight-inputTargetLeft)+'px');
+      const inputCol=document.querySelector('.input-col');
+      const terminalDesc=document.querySelector('.terminal-desc');
+      if(inputCol&&terminalDesc){
+        if(window.innerWidth>850){
+          inputCol.style.marginLeft='0px';
+          const naturalLeft=inputCol.getBoundingClientRect().left;
+          const minLeft=terminalDesc.getBoundingClientRect().right+20;
+          const desiredLeft=Math.max(inputTargetLeft,minLeft);
+          inputCol.style.marginLeft=(desiredLeft-naturalLeft)+'px';
+        } else {
+          inputCol.style.marginLeft='0px';
+        }
+      }
+      const choiceEl=document.querySelector('.choice'),readoutEl=document.getElementById('readout');
+      if(choiceEl&&readoutEl) readoutEl.style.height=choiceEl.getBoundingClientRect().height+'px';
       const topChamferL={x:t.left+topH/2-base.left,y:t.bottom-topV/2-base.top};
       const topChamferR={x:t.right-topH/2-base.left,y:t.bottom-topV/2-base.top};
       const leftChamferP1={x:l.right-cLeft.h-base.left,y:l.top-base.top}, leftChamferDir={x:cLeft.h,y:cLeft.v};
