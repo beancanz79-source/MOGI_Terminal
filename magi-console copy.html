@@ -75,7 +75,7 @@
     .consensus-title { padding:18px; background:var(--amber); color:var(--ink); font:700 21px/.85 var(--font-accent); text-transform:none; letter-spacing:.06em; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; }.consensus-title small { display:block; margin-top:8px; font:10px var(--font-small); letter-spacing:0; }.consensus-body { padding:18px 21px; min-height:140px; background:var(--bg-main); overflow:hidden; }
     .consensus.fixed-height .consensus-body{ height:140px; overflow-y:auto; }.consensus-body p { margin:0; font-size:16px; line-height:1.45; }.confidence { margin-top:13px; color:var(--amber); font:10px var(--font-small); letter-spacing:.1em; }
     .consensus-body.revealing{position:relative;}
-    .consensus-body.revealing:before{content:"";position:absolute;top:3px;bottom:3px;left:calc(3px - var(--sweep-px,712px));width:calc(100% - 6px + var(--sweep-px,712px));background:repeating-linear-gradient(40deg,var(--ink) 0 23.33px,rgba(var(--triangle-rgb),.4) 23.33px 46.67px);background-size:46.67px 46.67px;animation:stripeSweep 1.499s linear 1 forwards;}
+    .consensus-body.revealing:before{content:"";position:absolute;top:3px;bottom:3px;left:calc(3px - var(--sweep-px,712px));width:calc(100% - 6px + var(--sweep-px,712px));background:repeating-linear-gradient(40deg,var(--ink) 0 23.33px,rgba(var(--triangle-rgb),.4) 23.33px 46.67px);background-size:46.67px 46.67px;animation:stripeSweep 1.049s linear 1 forwards;}
     .consensus-body.revealing p,.consensus-body.revealing .confidence{visibility:hidden;}
     @keyframes stripeSweep{from{transform:translateX(0);}to{transform:translateX(var(--sweep-px,712px));}}
     .empty { opacity:.66; }.hidden { display:none; } @media (max-width:850px){ .side-content{grid-template-columns:1fr}.module{grid-column:auto;grid-row:auto;grid-template-columns:1fr;border-left:0;border-top:2px solid var(--ink);padding:10px 0 0}.readout{grid-column:auto}.agents{width:100%;grid-template-columns:1fr;grid-template-areas:"crown" "left" "right";row-gap:56px}.agent.top,.agent.left,.agent.right{width:100%;min-height:185px;justify-self:stretch;transform:none}.magi-links,.magi-core,.baybayin,.wing-readout{display:none}.consensus{width:100%;grid-template-columns:1fr} }
@@ -175,7 +175,7 @@
       }
     }
     const ambienceLoop=new SeamlessLoop('audio/ambience.mp3',{volume:0.105,fadeMs:700});
-    const processLoop=new SeamlessLoop('audio/process.mp3',{volume:0.55,fadeMs:400,randomStart:true});
+    const processLoop=new SeamlessLoop('audio/process.mp3',{volume:0.275,fadeMs:400,randomStart:true});
     const alertSound=new Audio('audio/alert.mp3'); alertSound.volume=0.252;
     const ambienceCheckbox=$('#ambienceCheckbox');
     ambienceCheckbox.onchange=()=>{ if(ambienceCheckbox.checked){ ambienceLoop.start(); } else { ambienceLoop.stop(false); } };
@@ -337,7 +337,7 @@
           consensusEl.style.width=consensusWidth+'px';
           consensusEl.style.left=(base.left+base.width/2-mainRect.left)+'px';
           consensusEl.style.top=(wingBottomY-mainRect.top+25)+'px';
-          consensusEl.style.setProperty('--sweep-px',Math.round((consensusWidth-170)*0.8)+'px');
+          consensusEl.style.setProperty('--sweep-px',Math.round((consensusWidth-170)*0.56)+'px');
         }
       }}
     const FAVORITE_SEQUENCE=[0,1,2,1,0,2,0,1,2,2,0,1,2,1,0,1,2,0,2,1];
@@ -377,7 +377,7 @@
       if(e.kind==='BAD_RESPONSE') return {readout:'UNEXPECTED RESPONSE<br>FROM LOCAL MODEL', final:`${e.message} You can switch to DEMO MODE to use the prototype without a model.`};
       return {readout:'LOCAL LLM UNAVAILABLE<br>UNEXPECTED ERROR', final:`Something unexpected went wrong talking to the local model (${e.message}). You can switch to DEMO MODE to use the prototype without a model.`};
     }
-    function revealConsensus(){ $('#consensusPanel').classList.add('visible'); const body=$('#consensusBody'); body.classList.add('revealing'); processLoop.stop(true); alertSound.currentTime=0; alertSound.play().catch(()=>{}); setTimeout(()=>{ body.classList.remove('revealing'); },1499); }
+    function revealConsensus(){ $('#consensusPanel').classList.add('visible'); const body=$('#consensusBody'); body.classList.add('revealing'); processLoop.stop(true); alertSound.currentTime=0; alertSound.play().catch(()=>{}); setTimeout(()=>{ body.classList.remove('revealing'); },1049); }
     $('#consensusClose').onclick=()=>{ $('#consensusPanel').classList.remove('visible'); };
     $('#submit').onclick=async()=>{ const q=$('#query').value.trim(); if(!q){$('#query').focus();return} const btn=$('#submit'),local=$('#engine').value==='local';btn.disabled=true;btn.textContent='PARTITIONS PROCESSING…'; $('#readout').innerHTML='INQUIRY RECEIVED<br>SEPARATING PERSONALITIES'; $('#state').textContent='PROCESSING'; document.querySelectorAll('.agent.non-lead').forEach(a=>a.classList.remove('non-lead')); $('#consensusPanel').classList.remove('visible'); discussing(true); processLoop.start(); try { if(local){ $('.consensus').classList.remove('fixed-height'); const r=await consultLocal(q,$('#mode').value); render(r.synthesis,'CONFIDENCE / LOCAL CONSENSUS'); $('#readout').innerHTML='LOCAL CONSENSUS REACHED<br>NO PROMPT DATA LEFT YOUR MACHINE'; } else { $('.consensus').classList.add('fixed-height'); await new Promise(r=>setTimeout(r,1250+Math.random()*750)); const a=makeAnalysis(q,$('#mode').value); render(a.final,'CONFIDENCE '+a.conf); $('#readout').innerHTML='DEMO CONSENSUS REACHED<br>VERDICT AVAILABLE'; } $('#state').textContent='APPROVED'; revealConsensus(); } catch(e) { $('#state').textContent='OFFLINE'; const d=describeLocalError(e); $('#readout').innerHTML=d.readout; $('#final').textContent=d.final; $('#final').classList.remove('empty'); $('#confidence').textContent='CONFIDENCE — LOCAL MODEL OFFLINE'; updateWingReadout(); revealConsensus(); } finally {discussing(false);btn.disabled=false;btn.textContent='RUN NEW CONSULTATION →';} };
     function positionTopRule(){ const rule=$('#topRule'),topbar=document.querySelector('.topbar'),mainEl=document.querySelector('main'); if(!rule||!topbar||!mainEl) return; const mainRect=mainEl.getBoundingClientRect(),tbRect=topbar.getBoundingClientRect(); rule.style.top=(tbRect.bottom-mainRect.top+6)+'px'; }
