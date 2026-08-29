@@ -18,13 +18,13 @@
     .brand-mark { width:28px; height:28px; border:3px solid var(--red); border-radius:50%; position:relative; }.brand-mark:after { content:""; position:absolute; inset:6px; background:var(--red); border-radius:50%; }
     h1,h2,h3,.consensus-title,.send { font-family:var(--font-big); font-weight:700; text-transform:none; } h1 { margin:9px 0; font-family:var(--font-accent); font-size:35px; line-height:.78; letter-spacing:.025em; } .subtitle { margin:0; font:10px/1.35 var(--font-small); letter-spacing:.04em; max-width:205px; }
     .module { display:flex; flex-direction:column; gap:15px; width:100%; }
-    .module-top { display:flex; justify-content:space-between; align-items:stretch; gap:20px; width:100%; }
+    .module-top { display:flex; justify-content:space-between; align-items:stretch; gap:20px; width:100%; transform-origin:top left; }
     .terminal-desc { min-width:0; display:flex; flex-direction:column; justify-content:space-between; }
     .input-col { display:flex; flex-direction:column; gap:12px; width:var(--input-col-width,322px); }
     .settings-col { display:flex; flex-direction:column; justify-content:flex-start; gap:8px; }
     textarea { width:var(--input-col-width,322px); min-height:70px; resize:vertical; border:3px solid var(--border-input); border-radius:0; padding:10px; background:var(--bg-input); color:var(--paper); font:12px/1.35 var(--font-small); outline:none; } textarea:focus { box-shadow:4px 4px 0 var(--red); }
     .setting { display:flex; justify-content:space-between; align-items:center; gap:8px; font:10px var(--font-small); }.choice { width:140px; flex-shrink:0; border:3px solid var(--border-input); padding:5px 7px; background:var(--bg-input); color:var(--paper); font:inherit; }
-    #model { height:30.5px; background:var(--amber); color:transparent; }
+    #model { height:30.5px; margin-left:auto; background:var(--amber); color:transparent; }
     #model.outline { background:var(--bg-input); color:var(--paper); }
     button { border:0; cursor:pointer; letter-spacing:.08em; }.send { width:var(--input-col-width,322px); height:30.5px; display:flex; align-items:center; justify-content:center; padding:0 11px; background:var(--red); color:var(--ink); font-size:11px; transition:.18s; }.send:hover { background:var(--send-hover); transform:translateY(-2px); }.send:disabled { opacity:.55; cursor:wait; }
     main { grid-row:1; position:relative; padding:12px clamp(22px,4vw,64px) 16px; background:var(--bg-main); overflow:hidden; }
@@ -83,7 +83,8 @@
     .consensus-body.revealing:before{content:"";position:absolute;top:3px;bottom:3px;left:calc(3px - var(--sweep-px,712px));width:calc(100% - 6px + var(--sweep-px,712px));background:repeating-linear-gradient(40deg,var(--ink) 0 23.33px,rgba(var(--triangle-rgb),.4) 23.33px 46.67px);background-size:46.67px 46.67px;animation:stripeSweep .3s linear 1 forwards;}
     .consensus-body.revealing p,.consensus-body.revealing .confidence{visibility:hidden;}
     @keyframes stripeSweep{from{transform:translateX(0);}to{transform:translateX(var(--sweep-px,712px));}}
-    .empty { opacity:.66; }.hidden { display:none; } @media (max-width:850px){ .module-top{flex-direction:column;align-items:flex-start}.settings-col{width:100%}textarea,.send{width:100%}.input-col{margin-left:0!important;width:100%!important}.agents{width:100%;grid-template-columns:1fr;grid-template-areas:"crown" "left" "right";row-gap:56px}.agent.top,.agent.left,.agent.right{width:100%;min-height:185px;justify-self:stretch;transform:none}.magi-links,.magi-core,.baybayin,.wing-readout{display:none}.consensus{width:100%;grid-template-columns:1fr} }
+    .empty { opacity:.66; }.hidden { display:none; } @media (max-width:850px){ .consensus{width:100%;grid-template-columns:1fr} }
+    @media (max-width:600px){ h1{font-size:22px;} .brand{font-size:9px;gap:6px;} .brand-mark{width:18px;height:18px;}.brand-mark:after{inset:3px;} .subtitle{font-size:8px;max-width:130px;} .choice{width:95px;} .setting{font-size:8px;gap:5px;} .module-top{gap:10px;} }
   </style>
 </head>
 <body>
@@ -182,8 +183,17 @@
       }
     }
     const ambienceLoop=new SeamlessLoop('audio/ambience.mp3',{volume:0.105,fadeMs:700});
-    const processLoop=new SeamlessLoop('audio/process.mp3',{volume:0.05,fadeMs:400,randomStart:true});
-    const alertSound=new Audio('audio/alert.mp3'); alertSound.volume=0.252;
+    const alertSound=new Audio('audio/alert.mp3');
+    const alertGain=loopAudioCtx.createGain(); alertGain.gain.value=0;
+    loopAudioCtx.createMediaElementSource(alertSound).connect(alertGain).connect(loopAudioCtx.destination);
+    const ALERT_VOLUME=0.252,ALERT_FADE_MS=25;
+    function playAlert(){
+      alertSound.currentTime=0;
+      alertGain.gain.cancelScheduledValues(loopAudioCtx.currentTime);
+      alertGain.gain.setValueAtTime(0,loopAudioCtx.currentTime);
+      alertSound.play().catch(()=>{});
+      alertGain.gain.linearRampToValueAtTime(ALERT_VOLUME,loopAudioCtx.currentTime+ALERT_FADE_MS/1000);
+    }
     const beepPool=Array.from({length:6},()=>{
       const a=new Audio('audio/processing-beep.mp3');
       const gain=loopAudioCtx.createGain(); gain.gain.value=0.18;
@@ -219,14 +229,20 @@
     document.addEventListener('keydown',unlockAmbience,{once:true});
     let flickerTimers=[];
     const FLICKER_OFF_MS=100;
+    function staggeredRates(){
+      const rates=[4.5,5.0,5.5].map(slot=>slot+Math.random()*0.3);
+      for(let i=rates.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [rates[i],rates[j]]=[rates[j],rates[i]]; }
+      return rates;
+    }
     function startFlicker(){
-      document.querySelectorAll('.agent').forEach(agent=>{
-        let rate=4.5+Math.random()*1.5, regimeEnd=performance.now()+450+Math.random()*70;
-        const tick=()=>{ const isOff=agent.classList.toggle('flash-off'); if(isOff) playBeep(); scheduleNext(isOff); };
-        const scheduleNext=(isOff)=>{
+      const agents=Array.from(document.querySelectorAll('.agent'));
+      let regimeEnd=performance.now()+432+Math.random()*60, rates=staggeredRates();
+      agents.forEach((agent,idx)=>{
+        const tick=()=>{
+          const isOff=agent.classList.toggle('flash-off'); if(isOff) playBeep();
           const now=performance.now();
-          if(now>regimeEnd){ rate=4.5+Math.random()*1.5; regimeEnd=now+450+Math.random()*70; }
-          const delay=isOff?FLICKER_OFF_MS:Math.max(20,1000/rate-FLICKER_OFF_MS);
+          if(now>regimeEnd){ regimeEnd=now+432+Math.random()*60; rates=staggeredRates(); }
+          const delay=isOff?FLICKER_OFF_MS:Math.max(20,1000/rates[idx]-FLICKER_OFF_MS);
           flickerTimers.push(setTimeout(tick,delay));
         };
         flickerTimers.push(setTimeout(tick,Math.random()*300));
@@ -302,7 +318,6 @@
     const WING_EDGE_GAP=8;
     const WING_TOP_GAP=5;
     function layoutMagi(){const host=$('#agents');if(!host)return;const top=host.querySelector('.top'),left=host.querySelector('.left'),right=host.querySelector('.right'),lineL=$('#lineL'),lineR=$('#lineR'),lineB=$('#lineB'),core=$('#magiCore');if(!top||!left||!right||!lineL||!lineR||!lineB||!core)return;
-      if(window.innerWidth<=850){top.style.transform='';left.style.transform='';right.style.transform='';return;}
       left.style.transform='none';right.style.transform='none';top.style.transform='none';
       const chamferSide=(el)=>{const rect=el.getBoundingClientRect();let v=rect.height/2-SIDE_CHAMFER_RAISE,h=v/TAN32;const maxH=rect.width-6;if(h>maxH){h=Math.max(maxH,4);v=h*TAN32;}el.style.setProperty('--ch-v',v+'px');el.style.setProperty('--ch-h',h+'px');return{v,h};};
       const cLeft=chamferSide(left),cRight=chamferSide(right);
@@ -315,29 +330,20 @@
       const translateY=lAfterX.top-(topRectN.bottom-topV);
       top.style.transform=`translateY(${translateY}px)`;
       const base=host.getBoundingClientRect(),t=top.getBoundingClientRect(),l=left.getBoundingClientRect(),r=right.getBoundingClientRect();
-      const fullSpanWidth=r.right-l.left;
+      const fullSpanWidth=(r.right-8)-(l.left+8);
       document.documentElement.style.setProperty('--input-col-width',fullSpanWidth+'px');
       const inputCol=document.querySelector('.input-col');
       if(inputCol){
-        if(window.innerWidth>850){
-          inputCol.style.marginLeft='0px';
-          const naturalLeft=inputCol.getBoundingClientRect().left;
-          inputCol.style.marginLeft=(l.left-naturalLeft)+'px';
-        } else {
-          inputCol.style.marginLeft='0px';
-        }
+        inputCol.style.marginLeft='0px';
+        const naturalLeft=inputCol.getBoundingClientRect().left;
+        inputCol.style.marginLeft=(l.left+8-naturalLeft)+'px';
       }
       const descCol=document.querySelector('.terminal-desc'),settingsCol=document.querySelector('.settings-col');
       if(descCol&&settingsCol){
-        if(window.innerWidth>850){
-          descCol.style.position='relative'; descCol.style.left='0px';
-          descCol.style.left=(l.left-descCol.getBoundingClientRect().left)+'px';
-          settingsCol.style.position='relative'; settingsCol.style.right='0px';
-          settingsCol.style.right=(settingsCol.getBoundingClientRect().right-r.right)+'px';
-        } else {
-          descCol.style.position=''; descCol.style.left='';
-          settingsCol.style.position=''; settingsCol.style.right='';
-        }
+        descCol.style.position='relative'; descCol.style.left='0px';
+        descCol.style.left=(l.left+8-descCol.getBoundingClientRect().left)+'px';
+        settingsCol.style.position='relative'; settingsCol.style.right='0px';
+        settingsCol.style.right=(settingsCol.getBoundingClientRect().right-(r.right-8))+'px';
       }
       const topChamferL={x:t.left+topH/2-base.left,y:t.bottom-topV/2-base.top};
       const topChamferR={x:t.right-topH/2-base.left,y:t.bottom-topV/2-base.top};
@@ -432,9 +438,9 @@
       if(e.kind==='BAD_RESPONSE') return {final:`${e.message} You can switch to DEMO MODE to use the prototype without a model.`};
       return {final:`Something unexpected went wrong talking to the local model (${e.message}). You can switch to DEMO MODE to use the prototype without a model.`};
     }
-    function revealConsensus(){ $('#consensusPanel').classList.add('visible'); const body=$('#consensusBody'); body.classList.add('revealing'); processLoop.stop(true); alertSound.currentTime=0; alertSound.play().catch(()=>{}); setTimeout(()=>{ body.classList.remove('revealing'); },300); }
+    function revealConsensus(){ $('#consensusPanel').classList.add('visible'); const body=$('#consensusBody'); body.classList.add('revealing'); playAlert(); setTimeout(()=>{ body.classList.remove('revealing'); },300); }
     $('#consensusClose').onclick=()=>{ $('#consensusPanel').classList.remove('visible'); };
-    $('#submit').onclick=async()=>{ const q=$('#query').value.trim(); if(!q){$('#query').focus();return} const btn=$('#submit'),local=$('#engine').value==='local';btn.disabled=true;btn.textContent='PARTITIONS PROCESSING…'; $('#state').textContent='PROCESSING'; document.querySelectorAll('.agent.non-lead').forEach(a=>a.classList.remove('non-lead')); $('#consensusPanel').classList.remove('visible'); discussing(true); processLoop.start(); try { if(local){ $('.consensus').classList.remove('fixed-height'); const r=await consultLocal(q,$('#mode').value); render(r.synthesis,'CONFIDENCE / LOCAL CONSENSUS'); } else { $('.consensus').classList.add('fixed-height'); await new Promise(r=>setTimeout(r,1400+Math.random()*900)); const a=makeAnalysis(q,$('#mode').value); render(a.final,'CONFIDENCE '+a.conf); } $('#state').textContent='APPROVED'; revealConsensus(); } catch(e) { $('#state').textContent='OFFLINE'; const d=describeLocalError(e); $('#final').textContent=d.final; $('#final').classList.remove('empty'); $('#confidence').textContent='CONFIDENCE — LOCAL MODEL OFFLINE'; updateWingReadout(); revealConsensus(); } finally {discussing(false);btn.disabled=false;btn.textContent='RUN NEW CONSULTATION';} };
+    $('#submit').onclick=async()=>{ const q=$('#query').value.trim(); if(!q){$('#query').focus();return} const btn=$('#submit'),local=$('#engine').value==='local';btn.disabled=true;btn.textContent='PARTITIONS PROCESSING…'; $('#state').textContent='PROCESSING'; document.querySelectorAll('.agent.non-lead').forEach(a=>a.classList.remove('non-lead')); $('#consensusPanel').classList.remove('visible'); discussing(true); try { if(local){ $('.consensus').classList.remove('fixed-height'); const r=await consultLocal(q,$('#mode').value); render(r.synthesis,'CONFIDENCE / LOCAL CONSENSUS'); } else { $('.consensus').classList.add('fixed-height'); await new Promise(r=>setTimeout(r,1400+Math.random()*900)); const a=makeAnalysis(q,$('#mode').value); render(a.final,'CONFIDENCE '+a.conf); } $('#state').textContent='APPROVED'; revealConsensus(); } catch(e) { $('#state').textContent='OFFLINE'; const d=describeLocalError(e); $('#final').textContent=d.final; $('#final').classList.remove('empty'); $('#confidence').textContent='CONFIDENCE — LOCAL MODEL OFFLINE'; updateWingReadout(); revealConsensus(); } finally {discussing(false);btn.disabled=false;btn.textContent='RUN NEW CONSULTATION';} };
     function positionTopRule(){ const rule=$('#topRule'),topbar=document.querySelector('.topbar'),mainEl=document.querySelector('main'); if(!rule||!topbar||!mainEl) return; const mainRect=mainEl.getBoundingClientRect(),tbRect=topbar.getBoundingClientRect(); rule.style.top=(tbRect.bottom-mainRect.top+6)+'px'; }
     function layoutAll(){ layoutMagi(); positionTopRule(); }
     $('#mode').onchange=updateWingReadout; updateWingReadout();
