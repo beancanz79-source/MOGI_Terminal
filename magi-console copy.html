@@ -6,7 +6,7 @@
   <title>MOGI / Terminal</title>
   <style>
     @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&display=swap');
-    :root { --ink:#101110; --paper:#F76C1B; --line:#F76C1B; --red:#F76C1B; --rust:#2f6843; --amber:#F76C1B; --cyan:#F76C1B; --triangle:#F76C1B; --triangle-rgb:247,108,27; --muted:#F76C1B; --box-idle:#79ED92; --box-idle-rgb:121,237,146; --box-hover:#A8F3B8; --box-hover-rgb:168,243,184; --bg-body:#090A09; --bg-aside:#0E0F0D; --bg-input:#161715; --bg-main:#0B0C0B; --border-input:#F76C1B; --border-module:#F76C1B; --border-topbar:#F76C1B; --text-status:#F76C1B; --send-hover:#FFCC33; --consensus-tint-rgb:53,226,173; --font-big:'Helvetica Neue',Helvetica,Arial,sans-serif; --font-small:'IBM Plex Mono',monospace; --font-accent:'Georgia Pro Condensed',Georgia,serif; }
+    :root { --ink:#101110; --paper:#F76C1B; --line:#F76C1B; --red:#F76C1B; --rust:#2f6843; --amber:#F76C1B; --cyan:#F76C1B; --triangle:#F76C1B; --triangle-rgb:247,108,27; --muted:#F76C1B; --box-idle:#2596be; --box-idle-rgb:37,150,190; --box-hover:#39BEEF; --box-hover-rgb:57,190,239; --wing-color:#79ED92; --bg-body:#090A09; --bg-aside:#0E0F0D; --bg-input:#161715; --bg-main:#0B0C0B; --border-input:#F76C1B; --border-module:#F76C1B; --border-topbar:#F76C1B; --text-status:#F76C1B; --send-hover:#FFCC33; --consensus-tint-rgb:53,226,173; --font-big:'Helvetica Neue',Helvetica,Arial,sans-serif; --font-small:'IBM Plex Mono',monospace; --font-accent:'Georgia Pro Condensed',Georgia,serif; }
     * { box-sizing:border-box; } html{filter:blur(.07px);} body { margin:0; min-height:100vh; background:var(--bg-body); color:var(--paper); font-family:var(--font-small); }
     .edge-blur{position:fixed;inset:0;z-index:9997;pointer-events:none;backdrop-filter:blur(.4px);-webkit-backdrop-filter:blur(.4px);mask-image:radial-gradient(ellipse 60% 60% at 50% 50%,transparent 0%,black 100%);-webkit-mask-image:radial-gradient(ellipse 60% 60% at 50% 50%,transparent 0%,black 100%);}
     body:before{content:"";position:fixed;inset:0;z-index:9999;pointer-events:none;background:radial-gradient(ellipse 75% 75% at 50% 50%,transparent 60%,rgba(0,0,0,.18) 100%);}
@@ -24,6 +24,14 @@
     .settings-col { display:flex; flex-direction:column; justify-content:flex-start; gap:8px; }
     textarea { width:var(--input-col-width,322px); min-height:70px; resize:vertical; border:3px solid var(--border-input); border-radius:0; padding:10px; background:var(--bg-input); color:var(--paper); font:12px/1.35 var(--font-small); outline:none; } textarea:focus { box-shadow:4px 4px 0 var(--red); }
     .setting { display:flex; justify-content:space-between; align-items:center; gap:8px; font:10px var(--font-small); }.choice { width:140px; flex-shrink:0; border:3px solid var(--border-input); padding:5px 7px; background:var(--bg-input); color:var(--paper); font:inherit; }
+    .xselect{position:relative;}
+    .xselect-btn{display:flex;align-items:center;justify-content:space-between;text-align:left;cursor:pointer;gap:6px;appearance:none;-webkit-appearance:none;}
+    .xselect-btn:after{content:"▾";font-size:9px;opacity:.8;}
+    .xselect-list{position:absolute;top:calc(100% + 3px);left:0;width:100%;background:var(--bg-input);border:3px solid var(--border-input);z-index:20;max-height:220px;overflow-y:auto;}
+    .xselect-opt{padding:5px 7px;font:10px var(--font-small);color:var(--paper);cursor:pointer;}
+    .xselect-opt:hover,.xselect-opt.hl{background:var(--red);color:var(--ink);}
+    .xselect-opt[aria-selected="true"]{color:var(--red);}
+    .xselect-backdrop{display:none;}
     #model { height:30.5px; margin-left:auto; background:var(--amber); color:transparent; }
     #model.outline { background:var(--bg-input); color:var(--paper); }
     button { border:0; cursor:pointer; letter-spacing:.08em; }.send { width:var(--input-col-width,322px); height:30.5px; display:flex; align-items:center; justify-content:center; padding:0 11px; background:var(--red); color:var(--ink); font-size:11px; transition:.18s; }.send:hover { background:var(--send-hover); transform:translateY(-2px); }.send:disabled { opacity:.55; cursor:wait; }
@@ -61,7 +69,7 @@
     .baybayin.left{transform:translateX(-100%);}
     .baybayin.right{transform:translateX(0);}
     .baybayin .line{position:relative;height:14px;}
-    .baybayin .line:before,.baybayin .line:after{content:"";position:absolute;left:0;right:0;height:6px;border:2px solid var(--box-idle);box-sizing:border-box;}
+    .baybayin .line:before,.baybayin .line:after{content:"";position:absolute;left:0;right:0;height:6px;border:2px solid var(--wing-color);box-sizing:border-box;}
     .baybayin .line:before{top:0;}
     .baybayin .line:after{bottom:0;}
     .baybayin .glyph{font:900 26px 'Baybayin Deko','Malamaya Baybayin','matatas 1','Noto Sans Tagalog',sans-serif;color:var(--triangle);text-shadow:0 0 10px rgba(var(--triangle-rgb),.7);-webkit-text-stroke:1.4px var(--triangle);paint-order:stroke fill;white-space:nowrap;}
@@ -72,7 +80,7 @@
     .agent.non-lead:before{background:#E50707;}
     .agent.non-lead{filter:drop-shadow(0 0 5px rgba(229,7,7,.5)) drop-shadow(0 0 10px rgba(var(--triangle-rgb),.7));}
     .agent.non-lead:hover{filter:drop-shadow(0 0 9px rgba(229,7,7,.6)) drop-shadow(0 0 10px rgba(var(--triangle-rgb),.7));}
-    .agent.non-lead:hover:before{background:#FF3030;}
+    .agent.non-lead:hover:before{background:#FF4D4D;}
     .consensus{position:absolute;top:50%;left:50%;transform:translateX(-50%);width:min(860px,100%);z-index:10;display:grid;grid-template-columns:170px 1fr;background:var(--bg-main);border:3px solid var(--amber);opacity:0;visibility:hidden;pointer-events:none;transition:opacity .25s;}
     .consensus.visible{opacity:1;visibility:visible;pointer-events:auto;}
     .consensus>*{position:relative;z-index:1;}
@@ -84,7 +92,7 @@
     .consensus-body.revealing p,.consensus-body.revealing .confidence{visibility:hidden;}
     @keyframes stripeSweep{from{transform:translateX(0);}to{transform:translateX(var(--sweep-px,712px));}}
     .empty { opacity:.66; }.hidden { display:none; } @media (max-width:850px){ .consensus{width:100%;grid-template-columns:1fr} }
-    @media (max-width:600px){ h1{font-size:22px;} .brand{font-size:9px;gap:6px;} .brand-mark{width:18px;height:18px;}.brand-mark:after{inset:3px;} .subtitle{font-size:8px;max-width:130px;} .choice{width:95px;} .setting{font-size:8px;gap:5px;} .module-top{gap:10px;} }
+    @media (max-width:600px){ h1{font-size:22px;} .brand{font-size:9px;gap:6px;} .brand-mark{width:18px;height:18px;}.brand-mark:after{inset:3px;} .subtitle{font-size:8px;max-width:130px;} .choice{width:95px;} .setting{font-size:8px;gap:5px;} .module-top{gap:10px;} .agent.top{min-height:130px;width:min(190px,100%);} .agents{column-gap:16px;margin-top:6px;} main{padding-top:16px;} .agent h3 .frame{top:-2px;} .baybayin .line{height:13px;} .baybayin .line:before,.baybayin .line:after{border-width:1px;} .xselect-backdrop.open{display:block;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:39;} .xselect-list{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);width:95px;max-height:70vh;overflow-y:auto;z-index:40;box-shadow:0 0 20px rgba(var(--triangle-rgb),.5);} .xselect-opt{font:8px var(--font-small);} }
   </style>
 </head>
 <body>
@@ -93,7 +101,7 @@
     <div class="module">
       <div class="module-top">
         <div class="terminal-desc"><div class="brand"><i class="brand-mark"></i> MOGI SYSTEM / β-01</div><h1>TERMINAL</h1><p class="subtitle">THREE MINDS. ONE VERDICT.<br>OPERATING INDEPENDENTLY.</p></div>
-        <div class="settings-col"><div class="setting">DECISION MODE <select class="choice" id="mode"><option>Balanced</option><option>Cautious</option><option>Decisive</option></select></div><div class="setting">SYSTEM CONNECTION <select class="choice" id="engine"><option value="local">STRONG</option><option value="demo" selected>SOFT</option></select></div><label class="setting" id="modelLine"><input class="choice" id="model" value="qwen2.5:3b" aria-label="Local model name" /></label></div>
+        <div class="settings-col"><div class="setting">DECISION MODE <div class="xselect" data-select="mode"><button type="button" class="choice xselect-btn" aria-haspopup="listbox" aria-expanded="false">Balanced</button><div class="xselect-list" role="listbox" hidden></div></div><select class="choice" id="mode" hidden><option>Balanced</option><option>Cautious</option><option>Decisive</option></select></div><div class="setting">SYSTEM CONNECTION <div class="xselect" data-select="engine"><button type="button" class="choice xselect-btn" aria-haspopup="listbox" aria-expanded="false">SOFT</button><div class="xselect-list" role="listbox" hidden></div></div><select class="choice" id="engine" hidden><option value="local">STRONG</option><option value="demo" selected>SOFT</option></select></div><label class="setting" id="modelLine"><input class="choice" id="model" value="qwen2.5:3b" aria-label="Local model name" /></label></div>
       </div>
       <div class="input-col"><button class="send" id="submit">INITIALIZE CONSULTATION</button><textarea id="query" placeholder="e.g. Should I take a job offer that pays more but has a longer commute?">Should I take a job offer that pays more but has a longer commute?</textarea></div>
     </div></div></aside>
@@ -101,6 +109,7 @@
       <section class="agents" id="agents"><article class="agent top"><div class="agent-id">MOGI-01</div><h3><span class="frame" aria-hidden="true"></span>EC-31</h3><p class="tag">LOGICAL</p></article><article class="agent left"><div class="agent-id">MOGI-02</div><h3><span class="frame" aria-hidden="true"></span>RS-27</h3><p class="tag">RATIONAL</p></article><article class="agent right"><div class="agent-id">MOGI-03</div><h3><span class="frame" aria-hidden="true"></span>JM-21</h3><p class="tag">EMPIRICAL</p></article><div class="magi-links" aria-hidden="true"><span class="magi-line" id="lineL"></span><span class="magi-line" id="lineR"></span><span class="magi-line" id="lineB"></span></div><div class="magi-core" id="magiCore"><span class="word">MOGI</span><span class="rule"></span></div><div class="baybayin left" id="baybayinL" aria-hidden="true"><span class="line top"></span><span class="glyph">[ᜋ]ᜃᜊᜄᜓᜅ᜔ [ᜂ]ᜉᜒᜇᜐ᜔ᜌᜓᜅ᜔</span><span class="line bottom"></span></div><div class="baybayin right" id="baybayinR" aria-hidden="true"><span class="line top"></span><span class="glyph">[ᜄ᜔]ᜂᜋᜄᜊᜌ᜔ ᜐ [ᜁ]ᜐᜒᜉᜈ᜔</span><span class="line bottom"></span></div><div class="wing-readout" id="wingReadout" aria-hidden="true"><span id="wrConfidence">CONFIDENCE: —</span><span id="wrMode">DECISION MODE: BALANCED</span></div></section>
       <section class="consensus" id="consensusPanel"><button class="consensus-close" id="consensusClose" aria-label="Close">×</button><div class="consensus-title">CONSENSUS<br>PROTOCOL<small id="state">NO DATA</small></div><div class="consensus-body" id="consensusBody"><p id="final" class="empty">The final recommendation requires a submitted inquiry.</p><div class="confidence" id="confidence">CONFIDENCE —</div></div></section>
     </main></div>
+    <div class="xselect-backdrop" id="xselectBackdrop" aria-hidden="true"></div>
   <script>
     const $=s=>document.querySelector(s);
     const loopAudioCtx=new (window.AudioContext||window.webkitAudioContext)();
@@ -303,7 +312,9 @@
       const bal=`A sound answer must include how this will feel in ordinary life—not just on the day you choose. Protect the people, routines, and values you would regret trading away.`;
       const cas=`Avoid indefinite analysis. Set one clear condition that makes the answer a yes, and one that makes it a no. ${decisive?'Choose promptly once those conditions are met.':'Take a small reversible step before committing if you can.'}`;
       const strong=nextDemoFinal(mode);
-      return {mel,bal,cas,final:strong,conf:cautious?'78% / RISK-WEIGHTED':decisive?'84% / ACTION-WEIGHTED':'81% / BALANCED'}; }
+      const randPct=(base)=>Math.max(60,Math.min(97,Math.round(base+(Math.random()*10-5))));
+      const conf=cautious?randPct(78)+'% / RISK-WEIGHTED':decisive?randPct(84)+'% / ACTION-WEIGHTED':randPct(81)+'% / BALANCED';
+      return {mel,bal,cas,final:strong,conf}; }
     const cards=['EC-31','RS-27','JM-21'];
     const TAGS=['LOGICAL','RATIONAL','EMPIRICAL'];
     const MAGI_LINKS_HTML='<div class="magi-links" aria-hidden="true"><span class="magi-line" id="lineL"></span><span class="magi-line" id="lineR"></span><span class="magi-line" id="lineB"></span></div><div class="magi-core" id="magiCore"><span class="word">MOGI</span><span class="rule"></span></div><div class="baybayin left" id="baybayinL" aria-hidden="true"><span class="line top"></span><span class="glyph">[ᜋ]ᜃᜊᜄᜓᜅ᜔ [ᜂ]ᜉᜒᜇᜐ᜔ᜌᜓᜅ᜔</span><span class="line bottom"></span></div><div class="baybayin right" id="baybayinR" aria-hidden="true"><span class="line top"></span><span class="glyph">[ᜄ᜔]ᜂᜋᜄᜊᜌ᜔ ᜐ [ᜁ]ᜐᜒᜉᜈ᜔</span><span class="line bottom"></span></div><div class="wing-readout" id="wingReadout" aria-hidden="true"><span id="wrConfidence">CONFIDENCE: —</span><span id="wrMode">DECISION MODE: BALANCED</span></div>';
@@ -317,6 +328,7 @@
     const LINE_THICKNESS=6;
     const WING_EDGE_GAP=8;
     const WING_TOP_GAP=5;
+    const EDGE_INSET=5;
     function layoutMagi(){const host=$('#agents');if(!host)return;const top=host.querySelector('.top'),left=host.querySelector('.left'),right=host.querySelector('.right'),lineL=$('#lineL'),lineR=$('#lineR'),lineB=$('#lineB'),core=$('#magiCore');if(!top||!left||!right||!lineL||!lineR||!lineB||!core)return;
       left.style.transform='none';right.style.transform='none';top.style.transform='none';
       const chamferSide=(el)=>{const rect=el.getBoundingClientRect();let v=rect.height/2-SIDE_CHAMFER_RAISE,h=v/TAN32;const maxH=rect.width-6;if(h>maxH){h=Math.max(maxH,4);v=h*TAN32;}el.style.setProperty('--ch-v',v+'px');el.style.setProperty('--ch-h',h+'px');return{v,h};};
@@ -330,20 +342,20 @@
       const translateY=lAfterX.top-(topRectN.bottom-topV);
       top.style.transform=`translateY(${translateY}px)`;
       const base=host.getBoundingClientRect(),t=top.getBoundingClientRect(),l=left.getBoundingClientRect(),r=right.getBoundingClientRect();
-      const fullSpanWidth=(r.right-8)-(l.left+8);
+      const fullSpanWidth=(r.right-EDGE_INSET)-(l.left+EDGE_INSET);
       document.documentElement.style.setProperty('--input-col-width',fullSpanWidth+'px');
       const inputCol=document.querySelector('.input-col');
       if(inputCol){
         inputCol.style.marginLeft='0px';
         const naturalLeft=inputCol.getBoundingClientRect().left;
-        inputCol.style.marginLeft=(l.left+8-naturalLeft)+'px';
+        inputCol.style.marginLeft=(l.left+EDGE_INSET-naturalLeft)+'px';
       }
       const descCol=document.querySelector('.terminal-desc'),settingsCol=document.querySelector('.settings-col');
       if(descCol&&settingsCol){
         descCol.style.position='relative'; descCol.style.left='0px';
-        descCol.style.left=(l.left+8-descCol.getBoundingClientRect().left)+'px';
+        descCol.style.left=(l.left+EDGE_INSET-descCol.getBoundingClientRect().left)+'px';
         settingsCol.style.position='relative'; settingsCol.style.right='0px';
-        settingsCol.style.right=(settingsCol.getBoundingClientRect().right-(r.right-8))+'px';
+        settingsCol.style.right=(settingsCol.getBoundingClientRect().right-(r.right-EDGE_INSET))+'px';
       }
       const topChamferL={x:t.left+topH/2-base.left,y:t.bottom-topV/2-base.top};
       const topChamferR={x:t.right-topH/2-base.left,y:t.bottom-topV/2-base.top};
@@ -363,12 +375,25 @@
       if(baybayinL&&baybayinR){
         const mainEl=host.closest('main')||document.querySelector('main');
         const mainRect=mainEl?mainEl.getBoundingClientRect():{left:0,right:window.innerWidth};
-        const wingTopY=t.top-base.top+WING_TOP_GAP;
-        const leftAnchorX=t.left-base.left-WING_EDGE_GAP, rightAnchorX=t.right-base.left+WING_EDGE_GAP;
-        baybayinL.style.left=leftAnchorX+'px'; baybayinL.style.top=wingTopY+'px';
-        baybayinR.style.left=rightAnchorX+'px'; baybayinR.style.top=wingTopY+'px';
-        const leftLen=Math.max(20,(t.left-WING_EDGE_GAP)-(mainRect.left+WING_EDGE_GAP));
-        const rightLen=Math.max(20,(mainRect.right-WING_EDGE_GAP)-(t.right+WING_EDGE_GAP));
+        const narrowWings=window.innerWidth<=600;
+        let leftLen,rightLen;
+        if(narrowWings){
+          const centerX=(t.left+t.right)/2-base.left;
+          const centerAbsX=centerX+base.left;
+          leftLen=Math.max(20,centerAbsX-(mainRect.left+EDGE_INSET));
+          rightLen=Math.max(20,(mainRect.right-EDGE_INSET)-centerAbsX);
+          baybayinL.style.left=(centerX-WING_EDGE_GAP)+'px';
+          baybayinR.style.left=(centerX+WING_EDGE_GAP)+'px';
+          baybayinL.style.top=(t.top-base.top-40)+'px';
+          baybayinR.style.top=(t.top-base.top-40)+'px';
+        } else {
+          const wingTopY=t.top-base.top+WING_TOP_GAP;
+          const leftAnchorX=t.left-base.left-WING_EDGE_GAP, rightAnchorX=t.right-base.left+WING_EDGE_GAP;
+          baybayinL.style.left=leftAnchorX+'px'; baybayinL.style.top=wingTopY+'px';
+          baybayinR.style.left=rightAnchorX+'px'; baybayinR.style.top=wingTopY+'px';
+          leftLen=Math.max(20,(t.left-WING_EDGE_GAP)-(mainRect.left+WING_EDGE_GAP));
+          rightLen=Math.max(20,(mainRect.right-WING_EDGE_GAP)-(t.right+WING_EDGE_GAP));
+        }
         baybayinL.querySelectorAll('.line').forEach(el=>el.style.width=leftLen+'px');
         baybayinR.querySelectorAll('.line').forEach(el=>el.style.width=rightLen+'px');
         const fillGlyph=(wing,lineLen)=>{
@@ -381,13 +406,29 @@
           glyph.style.fontSize=(currentSize*(avail/currentWidth))+'px';
         };
         fillGlyph(baybayinL,leftLen); fillGlyph(baybayinR,rightLen);
+        if(narrowWings){
+          const wingH=baybayinL.getBoundingClientRect().height;
+          const finalTop=t.top-base.top-wingH-WING_TOP_GAP;
+          baybayinL.style.top=finalTop+'px';
+          baybayinR.style.top=finalTop+'px';
+        }
         const lWingRect=baybayinL.getBoundingClientRect(), rWingRect=baybayinR.getBoundingClientRect();
         const wingReadout=$('#wingReadout');
         if(wingReadout){
-          const wingBottomY=lWingRect.bottom-base.top;
-          wingReadout.style.left=(l.left-base.left)+'px';
-          wingReadout.style.top=((wingBottomY+(l.top-base.top))/2)+'px';
-          wingReadout.style.transform='translate(0,-50%)';
+          if(narrowWings){
+            wingReadout.style.left=((topChamferL.x+topChamferR.x)/2)+'px';
+            wingReadout.style.top=(bottomLineY+10)+'px';
+            wingReadout.style.transform='translate(-50%,0)';
+            wingReadout.style.alignItems='center';
+            wingReadout.style.textAlign='center';
+          } else {
+            const wingBottomY=lWingRect.bottom-base.top;
+            wingReadout.style.left=(l.left-base.left)+'px';
+            wingReadout.style.top=((wingBottomY+(l.top-base.top))/2)+'px';
+            wingReadout.style.transform='translate(0,-50%)';
+            wingReadout.style.alignItems='flex-start';
+            wingReadout.style.textAlign='left';
+          }
         }
         const consensusEl=$('.consensus');
         if(consensusEl){
@@ -399,12 +440,14 @@
           consensusEl.style.top=(wingBottomY-mainRect.top+25)+'px';
           consensusEl.style.setProperty('--sweep-px',Math.round((consensusWidth-170)*0.56)+'px');
         }
+        updateWingReadout();
       }}
     const FAVORITE_SEQUENCE=[0,1,2,1,0,2,0,1,2,2,0,1,2,1,0,1,2,0,2,1];
     let favoriteSeqPos=0;
+    let revertTimer=null;
     function nextFavoriteIndex(){ const v=FAVORITE_SEQUENCE[favoriteSeqPos%FAVORITE_SEQUENCE.length]; favoriteSeqPos++; return v; }
-    const render=(final, conf)=>{ const favIdx=nextFavoriteIndex(); $('#agents').innerHTML=cards.map((name,i)=>{const shape=i===0?'top':i===1?'left':'right';const nonLead=i!==favIdx?' non-lead':'';return `<article class="agent ${shape}${nonLead}"><div class="agent-id">MOGI-0${i+1}</div><h3><span class="frame" aria-hidden="true"></span>${name}</h3><p class="tag">${TAGS[i]}</p></article>`;}).join('')+MAGI_LINKS_HTML; requestAnimationFrame(layoutMagi); $('#final').textContent=final; $('#final').classList.remove('empty'); $('#confidence').textContent=conf; updateWingReadout(); };
-    function updateWingReadout(){ const wr=$('#wingReadout'); if(!wr) return; const confText=$('#confidence')?.textContent||''; const m=confText.match(/(\d+)%/); const wrC=$('#wrConfidence'),wrM=$('#wrMode'); if(wrC) wrC.textContent='CONFIDENCE: '+(m?m[1]+'%':'—'); if(wrM) wrM.textContent='DECISION MODE: '+($('#mode').value||'').toUpperCase(); }
+    const render=(final, conf)=>{ const favIdx=nextFavoriteIndex(); $('#agents').innerHTML=cards.map((name,i)=>{const shape=i===0?'top':i===1?'left':'right';const nonLead=i!==favIdx?' non-lead':'';return `<article class="agent ${shape}${nonLead}"><div class="agent-id">MOGI-0${i+1}</div><h3><span class="frame" aria-hidden="true"></span>${name}</h3><p class="tag">${TAGS[i]}</p></article>`;}).join('')+MAGI_LINKS_HTML; requestAnimationFrame(layoutMagi); $('#final').textContent=final; $('#final').classList.remove('empty'); $('#confidence').textContent=conf; updateWingReadout(); clearTimeout(revertTimer); revertTimer=setTimeout(()=>{ document.querySelectorAll('.agent.non-lead').forEach(a=>a.classList.remove('non-lead')); },10000); };
+    function updateWingReadout(){ const wr=$('#wingReadout'); if(!wr) return; const confText=$('#confidence')?.textContent||''; const m=confText.match(/(\d+)%/); const wrC=$('#wrConfidence'),wrM=$('#wrMode'); const narrow=window.innerWidth<=600; if(wrC) wrC.textContent='CONFIDENCE: '+(m?m[1]+'%':'—'); if(wrM) wrM.textContent=(narrow?'MODE: ':'DECISION MODE: ')+($('#mode').value||'').toUpperCase(); }
     const OLLAMA_TIMEOUT_MS=45000;
     async function askLocal(prompt){
       const model=$('#model').value.trim();
@@ -428,6 +471,30 @@
     $('#engine').onchange=()=>{ updateModelStyle(); try{ localStorage.setItem('mogiEngine',$('#engine').value); }catch{} };
     updateModelStyle();
     $('#model').onchange=()=>{ try{ localStorage.setItem('mogiModel',$('#model').value.trim()); }catch{} };
+    function initXSelect(wrap){
+      const select=document.getElementById(wrap.dataset.select);
+      const btn=wrap.querySelector('.xselect-btn'), list=wrap.querySelector('.xselect-list');
+      const backdrop=$('#xselectBackdrop');
+      let open=false;
+      const syncFromSelect=()=>{
+        const opt=select.options[select.selectedIndex];
+        btn.textContent=opt?opt.textContent:'';
+        list.querySelectorAll('.xselect-opt').forEach(o=>o.setAttribute('aria-selected',String(o.dataset.value===select.value)));
+      };
+      const buildList=()=>{
+        list.innerHTML=Array.from(select.options).map(o=>`<div class="xselect-opt" role="option" data-value="${o.value}">${o.textContent}</div>`).join('');
+        list.querySelectorAll('.xselect-opt').forEach(o=>{ o.addEventListener('click',()=>{ select.value=o.dataset.value; select.dispatchEvent(new Event('change')); close(); }); });
+      };
+      const onDocClick=(e)=>{ if(!wrap.contains(e.target)&&!list.contains(e.target)) close(); };
+      const onKey=(e)=>{ if(e.key==='Escape') close(); };
+      function close(){ if(!open) return; open=false; list.hidden=true; btn.setAttribute('aria-expanded','false'); if(list.parentNode!==wrap) wrap.appendChild(list); backdrop?.classList.remove('open'); document.removeEventListener('click',onDocClick,true); document.removeEventListener('keydown',onKey); }
+      function openList(){ if(open) return; open=true; if(window.innerWidth<=600){ document.body.appendChild(list); backdrop?.classList.add('open'); } list.hidden=false; btn.setAttribute('aria-expanded','true'); document.addEventListener('click',onDocClick,true); document.addEventListener('keydown',onKey); }
+      btn.addEventListener('click',()=>{ open?close():openList(); });
+      backdrop?.addEventListener('click',close);
+      select.addEventListener('change',syncFromSelect);
+      buildList(); syncFromSelect();
+    }
+    document.querySelectorAll('.xselect').forEach(initXSelect);
     function describeLocalError(e){
       const model=$('#model').value.trim();
       if(e.kind==='NO_MODEL') return {final:`Enter a model name in the LOCAL MODEL field first (e.g. qwen2.5:3b), then try again. You can switch to DEMO MODE to use the prototype without a model.`};
