@@ -17,13 +17,15 @@
     .side-content { position:relative; z-index:1; display:flex; flex-direction:column; gap:8px; } .brand { display:flex; align-items:center; gap:11px; font:500 11px var(--font-small); letter-spacing:.12em; }
     .brand-mark { width:28px; height:28px; border:3px solid var(--red); border-radius:50%; position:relative; }.brand-mark:after { content:""; position:absolute; inset:6px; background:var(--red); border-radius:50%; }
     h1,h2,h3,.consensus-title,.send { font-family:var(--font-big); font-weight:700; text-transform:none; } h1 { margin:9px 0; font-family:var(--font-accent); font-size:35px; line-height:.78; letter-spacing:.025em; } .subtitle { margin:0; font:10px/1.35 var(--font-small); letter-spacing:.04em; max-width:205px; }
-    .module { display:grid; grid-template-columns:auto auto auto; grid-template-areas:"desc input settings"; align-items:stretch; gap:15px 20px; width:100%; }
-    .terminal-desc { grid-area:desc; display:flex; flex-direction:column; justify-content:space-between; }
-    .input-col { grid-area:input; display:flex; flex-direction:column; gap:12px; justify-self:start; }
-    .settings-col { grid-area:settings; display:flex; flex-direction:column; justify-content:space-between; }
+    .module { display:flex; flex-direction:column; gap:15px; width:100%; }
+    .module-top { display:flex; justify-content:space-between; align-items:stretch; gap:20px; width:100%; }
+    .terminal-desc { min-width:0; display:flex; flex-direction:column; justify-content:space-between; }
+    .input-col { display:flex; flex-direction:column; gap:12px; width:var(--input-col-width,322px); }
+    .settings-col { display:flex; flex-direction:column; justify-content:space-between; }
     textarea { width:var(--input-col-width,322px); min-height:70px; resize:vertical; border:3px solid var(--border-input); border-radius:0; padding:10px; background:var(--bg-input); color:var(--paper); font:12px/1.35 var(--font-small); outline:none; } textarea:focus { box-shadow:4px 4px 0 var(--red); }
     .setting { display:flex; justify-content:space-between; align-items:center; gap:8px; font:10px var(--font-small); }.choice { width:140px; flex-shrink:0; border:3px solid var(--border-input); padding:5px 7px; background:var(--bg-input); color:var(--paper); font:inherit; }
-    #model { background:var(--amber); color:var(--ink); }
+    #model { height:30.5px; background:var(--amber); color:transparent; }
+    #model.outline { background:var(--bg-input); color:var(--paper); }
     button { border:0; cursor:pointer; letter-spacing:.08em; }.send { width:var(--input-col-width,322px); height:30.5px; display:flex; align-items:center; justify-content:center; padding:0 11px; background:var(--red); color:var(--ink); font-size:11px; transition:.18s; }.send:hover { background:var(--send-hover); transform:translateY(-2px); }.send:disabled { opacity:.55; cursor:wait; }
     main { grid-row:1; position:relative; padding:12px clamp(22px,4vw,64px) 16px; background:var(--bg-main); overflow:hidden; }
     .top-rule{position:absolute;left:0;right:0;height:4px;background:var(--border-topbar);z-index:5;}
@@ -81,16 +83,18 @@
     .consensus-body.revealing:before{content:"";position:absolute;top:3px;bottom:3px;left:calc(3px - var(--sweep-px,712px));width:calc(100% - 6px + var(--sweep-px,712px));background:repeating-linear-gradient(40deg,var(--ink) 0 23.33px,rgba(var(--triangle-rgb),.4) 23.33px 46.67px);background-size:46.67px 46.67px;animation:stripeSweep .3s linear 1 forwards;}
     .consensus-body.revealing p,.consensus-body.revealing .confidence{visibility:hidden;}
     @keyframes stripeSweep{from{transform:translateX(0);}to{transform:translateX(var(--sweep-px,712px));}}
-    .empty { opacity:.66; }.hidden { display:none; } @media (max-width:850px){ .module{grid-template-columns:1fr;grid-template-areas:"desc" "settings" "input"}.settings-col{width:100%}textarea,.send{width:100%}.input-col{margin-left:0!important}.agents{width:100%;grid-template-columns:1fr;grid-template-areas:"crown" "left" "right";row-gap:56px}.agent.top,.agent.left,.agent.right{width:100%;min-height:185px;justify-self:stretch;transform:none}.magi-links,.magi-core,.baybayin,.wing-readout{display:none}.consensus{width:100%;grid-template-columns:1fr} }
+    .empty { opacity:.66; }.hidden { display:none; } @media (max-width:850px){ .module-top{flex-direction:column;align-items:flex-start}.settings-col{width:100%}textarea,.send{width:100%}.input-col{margin-left:0!important;width:100%!important}.agents{width:100%;grid-template-columns:1fr;grid-template-areas:"crown" "left" "right";row-gap:56px}.agent.top,.agent.left,.agent.right{width:100%;min-height:185px;justify-self:stretch;transform:none}.magi-links,.magi-core,.baybayin,.wing-readout{display:none}.consensus{width:100%;grid-template-columns:1fr} }
   </style>
 </head>
 <body>
   <div class="edge-blur" aria-hidden="true"></div>
   <div class="shell"><aside><div class="side-content">
     <div class="module">
+      <div class="module-top">
         <div class="terminal-desc"><div class="brand"><i class="brand-mark"></i> MOGI SYSTEM / β-01</div><h1>TERMINAL</h1><p class="subtitle">THREE MINDS. ONE VERDICT.<br>OPERATING INDEPENDENTLY.</p></div>
-        <div class="input-col"><button class="send" id="submit">INITIALIZE CONSULTATION</button><textarea id="query" placeholder="e.g. Should I take a job offer that pays more but has a longer commute?">Should I take a job offer that pays more but has a longer commute?</textarea></div>
-      <div class="settings-col"><div class="setting">DECISION MODE <select class="choice" id="mode"><option>Balanced</option><option>Cautious</option><option>Decisive</option></select></div><div class="setting">SYSTEM CONNECTION <select class="choice" id="engine"><option value="local">STRONG</option><option value="demo" selected>SOFT</option></select></div><label class="setting" id="modelLine"><input class="choice" id="model" value="qwen2.5:3b" aria-label="Local model name" /></label></div>
+        <div class="settings-col"><div class="setting">DECISION MODE <select class="choice" id="mode"><option>Balanced</option><option>Cautious</option><option>Decisive</option></select></div><div class="setting">SYSTEM CONNECTION <select class="choice" id="engine"><option value="local">STRONG</option><option value="demo" selected>SOFT</option></select></div><label class="setting" id="modelLine"><input class="choice" id="model" value="qwen2.5:3b" aria-label="Local model name" /></label></div>
+      </div>
+      <div class="input-col"><button class="send" id="submit">INITIALIZE CONSULTATION</button><textarea id="query" placeholder="e.g. Should I take a job offer that pays more but has a longer commute?">Should I take a job offer that pays more but has a longer commute?</textarea></div>
     </div></div></aside>
     <main><div class="top-rule" id="topRule"></div><div class="topbar"><div><div class="system">MOGI CORE // CONSULTATION NODE<label class="ambience-toggle" id="ambienceToggle"><input type="checkbox" id="ambienceCheckbox" checked>BACKGROUND PROCESSING</label></div><div class="status"><i class="pulse"></i> NEURAL PARTITIONS: STANDBY</div></div><div class="clock" id="clock">—<br><span>LOCAL SYSTEM TIME</span></div></div>
       <section class="agents" id="agents"><article class="agent top"><div class="agent-id">MOGI-01</div><h3><span class="frame" aria-hidden="true"></span>EC-31</h3><p class="tag">LOGICAL</p></article><article class="agent left"><div class="agent-id">MOGI-02</div><h3><span class="frame" aria-hidden="true"></span>RS-27</h3><p class="tag">RATIONAL</p></article><article class="agent right"><div class="agent-id">MOGI-03</div><h3><span class="frame" aria-hidden="true"></span>JM-21</h3><p class="tag">EMPIRICAL</p></article><div class="magi-links" aria-hidden="true"><span class="magi-line" id="lineL"></span><span class="magi-line" id="lineR"></span><span class="magi-line" id="lineB"></span></div><div class="magi-core" id="magiCore"><span class="word">MOGI</span><span class="rule"></span></div><div class="baybayin left" id="baybayinL" aria-hidden="true"><span class="line top"></span><span class="glyph">[ᜋ]ᜃᜊᜄᜓᜅ᜔ [ᜂ]ᜉᜒᜇᜐ᜔ᜌᜓᜅ᜔</span><span class="line bottom"></span></div><div class="baybayin right" id="baybayinR" aria-hidden="true"><span class="line top"></span><span class="glyph">[ᜄ᜔]ᜂᜋᜄᜊᜌ᜔ ᜐ [ᜁ]ᜐᜒᜉᜈ᜔</span><span class="line bottom"></span></div><div class="wing-readout" id="wingReadout" aria-hidden="true"><span id="wrConfidence">CONFIDENCE: —</span><span id="wrMode">DECISION MODE: BALANCED</span></div></section>
@@ -178,8 +182,30 @@
       }
     }
     const ambienceLoop=new SeamlessLoop('audio/ambience.mp3',{volume:0.105,fadeMs:700});
-    const processLoop=new SeamlessLoop('audio/process.mp3',{volume:0.275,fadeMs:400,randomStart:true});
+    const processLoop=new SeamlessLoop('audio/process.mp3',{volume:0.05,fadeMs:400,randomStart:true});
     const alertSound=new Audio('audio/alert.mp3'); alertSound.volume=0.252;
+    const beepPool=Array.from({length:6},()=>{
+      const a=new Audio('audio/processing-beep.mp3');
+      const gain=loopAudioCtx.createGain(); gain.gain.value=0.18;
+      loopAudioCtx.createMediaElementSource(a).connect(gain).connect(loopAudioCtx.destination);
+      return {a,gain};
+    });
+    let beepIdx=0;
+    const BEEP_CLIP_MS=70,BEEP_FADE_MS=15,BEEP_VOLUME=0.18;
+    function playBeep(){
+      const {a,gain}=beepPool[beepIdx]; beepIdx=(beepIdx+1)%beepPool.length;
+      a.currentTime=0;
+      gain.gain.cancelScheduledValues(loopAudioCtx.currentTime);
+      gain.gain.setValueAtTime(BEEP_VOLUME,loopAudioCtx.currentTime);
+      a.play().catch(()=>{});
+      setTimeout(()=>{
+        const now=loopAudioCtx.currentTime;
+        gain.gain.cancelScheduledValues(now);
+        gain.gain.setValueAtTime(gain.gain.value,now);
+        gain.gain.linearRampToValueAtTime(0,now+BEEP_FADE_MS/1000);
+        setTimeout(()=>{ if(!a.paused) a.pause(); },BEEP_FADE_MS+15);
+      },BEEP_CLIP_MS-BEEP_FADE_MS);
+    }
     const ambienceCheckbox=$('#ambienceCheckbox');
     ambienceCheckbox.onchange=()=>{ if(ambienceCheckbox.checked){ ambienceLoop.start(); } else { ambienceLoop.stop(false); } };
     if(ambienceCheckbox.checked){ ambienceLoop.start(); }
@@ -196,13 +222,14 @@
     function startFlicker(){
       document.querySelectorAll('.agent').forEach(agent=>{
         let rate=4.5+Math.random()*1.5, regimeEnd=performance.now()+450+Math.random()*70;
+        const tick=()=>{ const isOff=agent.classList.toggle('flash-off'); if(isOff) playBeep(); scheduleNext(isOff); };
         const scheduleNext=(isOff)=>{
           const now=performance.now();
           if(now>regimeEnd){ rate=4.5+Math.random()*1.5; regimeEnd=now+450+Math.random()*70; }
           const delay=isOff?FLICKER_OFF_MS:Math.max(20,1000/rate-FLICKER_OFF_MS);
-          flickerTimers.push(setTimeout(()=>scheduleNext(agent.classList.toggle('flash-off')),delay));
+          flickerTimers.push(setTimeout(tick,delay));
         };
-        flickerTimers.push(setTimeout(()=>scheduleNext(agent.classList.toggle('flash-off')),Math.random()*300));
+        flickerTimers.push(setTimeout(tick,Math.random()*300));
       });
     }
     function stopFlicker(){
@@ -289,15 +316,28 @@
       top.style.transform=`translateY(${translateY}px)`;
       const base=host.getBoundingClientRect(),t=top.getBoundingClientRect(),l=left.getBoundingClientRect(),r=right.getBoundingClientRect();
       const fullSpanWidth=r.right-l.left;
-      const moduleEl=document.querySelector('.module'),descColEl=document.querySelector('.terminal-desc'),settingsColEl=document.querySelector('.settings-col');
-      if(moduleEl&&descColEl&&settingsColEl&&window.innerWidth>850){
-        const moduleWidth=moduleEl.getBoundingClientRect().width;
-        const descWidth=descColEl.getBoundingClientRect().width;
-        const settingsWidth=settingsColEl.getBoundingClientRect().width;
-        const available=moduleWidth-descWidth-settingsWidth-40;
-        document.documentElement.style.setProperty('--input-col-width',Math.max(100,Math.min(fullSpanWidth,available))+'px');
-      } else {
-        document.documentElement.style.setProperty('--input-col-width',fullSpanWidth+'px');
+      document.documentElement.style.setProperty('--input-col-width',fullSpanWidth+'px');
+      const inputCol=document.querySelector('.input-col');
+      if(inputCol){
+        if(window.innerWidth>850){
+          inputCol.style.marginLeft='0px';
+          const naturalLeft=inputCol.getBoundingClientRect().left;
+          inputCol.style.marginLeft=(l.left-naturalLeft)+'px';
+        } else {
+          inputCol.style.marginLeft='0px';
+        }
+      }
+      const descCol=document.querySelector('.terminal-desc'),settingsCol=document.querySelector('.settings-col');
+      if(descCol&&settingsCol){
+        if(window.innerWidth>850){
+          descCol.style.position='relative'; descCol.style.left='0px';
+          descCol.style.left=(l.left-descCol.getBoundingClientRect().left)+'px';
+          settingsCol.style.position='relative'; settingsCol.style.right='0px';
+          settingsCol.style.right=(settingsCol.getBoundingClientRect().right-r.right)+'px';
+        } else {
+          descCol.style.position=''; descCol.style.left='';
+          settingsCol.style.position=''; settingsCol.style.right='';
+        }
       }
       const topChamferL={x:t.left+topH/2-base.left,y:t.bottom-topV/2-base.top};
       const topChamferR={x:t.right-topH/2-base.left,y:t.bottom-topV/2-base.top};
@@ -378,7 +418,9 @@
     }
     async function consultLocal(q,mode){ const common=`You are one partition of a fictional three-mind decision system. Answer the user inquiry directly and specifically. Decision mode: ${mode}. Do not mention being an AI. Keep it under 125 words. Inquiry: ${q}`; const roles=[`You are EC-31, a rigorous systems scientist. Focus on evidence, uncertainty, trade-offs, and tests. End with a vote: YES, NO, or CONDITIONAL.`, `You are RS-27, a compassionate humanist. Focus on values, wellbeing, relationships, and lived consequences. End with a vote: YES, NO, or CONDITIONAL.`, `You are JM-21, a practical decisive strategist. Focus on agency, timing, leverage, and the next concrete action. End with a vote: YES, NO, or CONDITIONAL.`]; const analyses=await Promise.all(roles.map(role=>askLocal(role+'\n\n'+common))); const raw=await askLocal(`You are the MOGI consensus protocol. Given this inquiry and three independent reports, state a concise, useful final recommendation in 2–4 sentences. Name conditions or a next step. Do not mention AI or the reports. On a final separate line, write LEAD: followed by exactly one of EC-31, RS-27, or JM-21—the partition whose reasoning most shaped the outcome.\n\nInquiry: ${q}\n\nEC-31: ${analyses[0]}\n\nRS-27: ${analyses[1]}\n\nJM-21: ${analyses[2]}`); const match=raw.match(/(?:^|\n)LEAD:\s*(EC-31|RS-27|JM-21)\s*$/i); return {analyses,synthesis:raw.replace(/(?:^|\n)LEAD:\s*(EC-31|RS-27|JM-21)\s*$/i,'').trim(),lead:match?match[1]:'EC-31'}; }
     try{ const savedModel=localStorage.getItem('mogiModel'); if(savedModel) $('#model').value=savedModel; const savedEngine=localStorage.getItem('mogiEngine'); if(savedEngine) $('#engine').value=savedEngine; }catch{}
-    $('#engine').onchange=()=>{ try{ localStorage.setItem('mogiEngine',$('#engine').value); }catch{} };
+    function updateModelStyle(){ $('#model').classList.toggle('outline',$('#engine').value==='local'); }
+    $('#engine').onchange=()=>{ updateModelStyle(); try{ localStorage.setItem('mogiEngine',$('#engine').value); }catch{} };
+    updateModelStyle();
     $('#model').onchange=()=>{ try{ localStorage.setItem('mogiModel',$('#model').value.trim()); }catch{} };
     function describeLocalError(e){
       const model=$('#model').value.trim();
