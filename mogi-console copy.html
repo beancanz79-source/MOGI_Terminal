@@ -10,6 +10,11 @@
     :root { --ink:#101110; --paper:#F76C1B; --line:#F76C1B; --red:#F76C1B; --rust:#2f6843; --amber:#F76C1B; --cyan:#F76C1B; --triangle:#F76C1B; --triangle-rgb:247,108,27; --muted:#F76C1B; --box-idle:#2596be; --box-idle-rgb:37,150,190; --box-hover:#39BEEF; --box-hover-rgb:57,190,239; --wing-color:#38B556; --bg-body:#090A09; --bg-aside:#0E0F0D; --bg-input:#161715; --bg-main:#0B0C0B; --border-input:#F76C1B; --border-module:#F76C1B; --border-topbar:#F76C1B; --text-status:#F76C1B; --send-hover:#FFCC33; --consensus-tint-rgb:53,226,173; --font-big:'Helvetica Neue',Helvetica,Arial,sans-serif; --font-small:'IBM Plex Mono',monospace; --font-accent:'Georgia Pro Condensed',Georgia,serif; }
     :root{color-scheme:dark;}
     * { box-sizing:border-box; } html{filter:blur(.07px);} body { margin:0; min-height:100vh; background:var(--bg-body); color:var(--paper); font-family:var(--font-small); }
+    #preScreen{position:fixed;inset:0;z-index:100000;background:#000;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:28px;}
+    #preScreen.done{display:none;}
+    #preScreen .ambience-toggle{font-size:13px;letter-spacing:.2em;}
+    #preScreen .ambience-toggle input{width:16px;height:16px;}
+    #preScreenEnter{width:180px;}
     #bootScreen{position:fixed;inset:0;z-index:99999;background:#000;overflow:hidden;}
     #bootCode{margin:0;padding:40px 32px;color:var(--amber);font:11px/1.5 var(--font-small);white-space:pre-wrap;word-break:break-all;}
     #bootCode.align-right{text-align:right;}
@@ -107,6 +112,7 @@
   </style>
 </head>
 <body>
+  <div id="preScreen"><label class="ambience-toggle" id="fullscreenPreToggle"><input type="checkbox" id="fullscreenCheckbox">FULL SCREEN</label><button type="button" class="send" id="preScreenEnter">ENTER</button></div>
   <div id="bootScreen" aria-hidden="true"><pre id="bootCode"></pre></div>
   <div class="edge-blur" aria-hidden="true"></div>
   <div class="shell"><aside><div class="side-content">
@@ -117,7 +123,7 @@
       </div>
       <div class="input-col"><button class="send" id="submit">INITIALIZE CONSULTATION</button><textarea id="query" placeholder="State your inquiry for consultation..."></textarea></div>
     </div></div></aside>
-    <main><div class="top-rule" id="topRule"></div><div class="topbar"><div><div class="system">MOGI CORE // CONSULTATION NODE<label class="ambience-toggle" id="ambienceToggle"><input type="checkbox" id="ambienceCheckbox">BACKGROUND PROCESSING</label></div><div class="status"><i class="pulse"></i> NEURAL PARTITIONS: STANDBY</div></div><div class="clock" id="clock">—<br><span>LOCAL SYSTEM TIME</span></div></div>
+    <main><div class="top-rule" id="topRule"></div><div class="topbar"><div><div class="system">MOGI CORE // CONSULTATION NODE<label class="ambience-toggle" id="ambienceToggle"><input type="checkbox" id="ambienceCheckbox">BACKGROUND PROCESSING</label><label class="ambience-toggle" id="fullscreenToggle"><input type="checkbox" id="fullscreenTopbarCheckbox">FULL SCREEN</label></div><div class="status"><i class="pulse"></i> NEURAL PARTITIONS: STANDBY</div></div><div class="clock" id="clock">—<br><span>LOCAL SYSTEM TIME</span></div></div>
       <section class="agents" id="agents"><article class="agent top"><div class="agent-id">MOGI-01</div><h3><span class="frame" aria-hidden="true"></span>EC-31</h3><p class="tag">LOGICAL</p></article><article class="agent left"><div class="agent-id">MOGI-02</div><h3><span class="frame" aria-hidden="true"></span>RS-27</h3><p class="tag">RATIONAL</p></article><article class="agent right"><div class="agent-id">MOGI-03</div><h3><span class="frame" aria-hidden="true"></span>JM-21</h3><p class="tag">EMPIRICAL</p></article><div class="magi-links" aria-hidden="true"><span class="magi-line" id="lineL"></span><span class="magi-line" id="lineR"></span><span class="magi-line" id="lineB"></span></div><div class="magi-core" id="magiCore"><span class="word">MOGI</span><span class="rule"></span></div><div class="baybayin left" id="baybayinL" aria-hidden="true"><span class="line top"></span><span class="glyph">[ᜋ]ᜃᜊᜄᜓᜅ᜔ [ᜂ]ᜉᜒᜇᜐ᜔ᜌᜓᜅ᜔</span><span class="line bottom"></span></div><div class="baybayin right" id="baybayinR" aria-hidden="true"><span class="line top"></span><span class="glyph">[ᜄ᜔]ᜂᜋᜄᜊᜌ᜔ ᜐ [ᜁ]ᜐᜒᜉᜈ᜔</span><span class="line bottom"></span></div><div class="wing-readout" id="wingReadout" aria-hidden="true"><span id="wrConfidence">CONFIDENCE: —</span><span id="wrMode">DECISION MODE: BALANCED</span></div></section>
       <section class="consensus" id="consensusPanel"><button class="consensus-close" id="consensusClose" aria-label="Close">×</button><div class="consensus-title">CONSENSUS<br>PROTOCOL<small id="state">NO DATA</small></div><div class="consensus-body" id="consensusBody"><p id="final" class="empty">The final recommendation requires a submitted inquiry.</p><div class="confidence" id="confidence">CONFIDENCE —</div></div></section>
     </main></div>
@@ -544,7 +550,7 @@
     function layoutAll(){ layoutMagi(); positionTopRule(); }
     $('#mode').onchange=updateWingReadout; updateWingReadout();
     window.addEventListener('resize',layoutAll); requestAnimationFrame(layoutAll); document.fonts?.ready?.then(layoutAll); setInterval(()=>$('#clock').innerHTML=new Date().toLocaleTimeString([], {hour:'2-digit',minute:'2-digit',second:'2-digit'})+'<br><span>LOCAL SYSTEM TIME</span>',1000);
-    (function(){
+    function startBootSequence(){
       const screen=$('#bootScreen'), codeEl=$('#bootCode');
       if(!screen||!codeEl) return;
       const finish=()=>screen.classList.add('done');
@@ -565,6 +571,34 @@
           setTimeout(finish,3400);
         });
       }).catch(finish);
+    }
+    (function(){
+      const pre=$('#preScreen'), enterBtn=$('#preScreenEnter'), cb=$('#fullscreenCheckbox');
+      if(!pre||!enterBtn){ startBootSequence(); return; }
+      enterBtn.addEventListener('click',()=>{
+        if(cb&&cb.checked){
+          const el=document.documentElement;
+          const req=el.requestFullscreen||el.webkitRequestFullscreen;
+          try{ req?.call(el)?.catch?.(()=>{}); }catch{}
+        }
+        pre.classList.add('done');
+        startBootSequence();
+      },{once:true});
+    })();
+    (function(){
+      const topbarCb=$('#fullscreenTopbarCheckbox');
+      if(!topbarCb) return;
+      topbarCb.checked=!!document.fullscreenElement;
+      topbarCb.onchange=()=>{
+        if(topbarCb.checked){
+          const el=document.documentElement;
+          const req=el.requestFullscreen||el.webkitRequestFullscreen;
+          try{ req?.call(el)?.catch?.(()=>{ topbarCb.checked=false; }); }catch{ topbarCb.checked=false; }
+        } else if(document.fullscreenElement){
+          (document.exitFullscreen||document.webkitExitFullscreen)?.call(document);
+        }
+      };
+      document.addEventListener('fullscreenchange',()=>{ topbarCb.checked=!!document.fullscreenElement; });
     })();
   </script>
 </body></html>
