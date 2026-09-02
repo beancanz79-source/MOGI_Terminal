@@ -9,6 +9,8 @@
     @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&display=swap');
     :root { --ink:#101110; --paper:#F76C1B; --line:#F76C1B; --red:#F76C1B; --rust:#2f6843; --amber:#F76C1B; --cyan:#F76C1B; --triangle:#F76C1B; --triangle-rgb:247,108,27; --muted:#F76C1B; --box-idle:#2596be; --box-idle-rgb:37,150,190; --box-hover:#39BEEF; --box-hover-rgb:57,190,239; --wing-color:#38B556; --bg-body:#090A09; --bg-aside:#0E0F0D; --bg-input:#161715; --bg-main:#0B0C0B; --border-input:#F76C1B; --border-module:#F76C1B; --border-topbar:#F76C1B; --text-status:#F76C1B; --send-hover:#FFCC33; --consensus-tint-rgb:53,226,173; --font-big:'Helvetica Neue',Helvetica,Arial,sans-serif; --font-small:'IBM Plex Mono',monospace; --font-accent:'Georgia Pro Condensed',Georgia,serif; }
     :root{color-scheme:dark;}
+    #customCursor{display:none;position:fixed;top:0;left:0;width:18px;height:18px;border-radius:50%;background:var(--amber);mix-blend-mode:difference;pointer-events:none;z-index:2147483647;transform:translate(-50%,-50%);}
+    @media (pointer:fine){ *{cursor:none !important;} #customCursor{display:block;} }
     * { box-sizing:border-box; } html{filter:blur(.07px);} body { margin:0; min-height:100vh; background:var(--bg-body); color:var(--paper); font-family:var(--font-small); }
     #preScreen{position:fixed;inset:0;z-index:100000;background:#000;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:28px;}
     #preScreen.done{display:none;}
@@ -34,19 +36,20 @@
     .terminal-desc { min-width:0; display:flex; flex-direction:column; justify-content:space-between; }
     .input-col { display:flex; flex-direction:column; gap:12px; width:var(--input-col-width,322px); }
     .settings-col { display:flex; flex-direction:column; justify-content:flex-start; gap:8px; }
-    textarea { width:var(--input-col-width,322px); min-height:70px; resize:vertical; border:3px solid var(--border-input); border-radius:0; padding:10px; background:var(--bg-input); color:var(--paper); font:12px/1.35 var(--font-small); outline:none; } textarea:focus { box-shadow:4px 4px 0 var(--red); } textarea::placeholder{ color:var(--amber); opacity:1; }
-    .setting { display:flex; justify-content:space-between; align-items:center; gap:8px; font:11px var(--font-small); }.choice { width:140px; flex-shrink:0; border:3px solid var(--border-input); padding:5px 7px; background:var(--bg-input); color:var(--paper); font:inherit; border-radius:0; appearance:none; -webkit-appearance:none; }
+    textarea { width:var(--input-col-width,322px); min-height:70px; resize:vertical; border:1.5px solid var(--border-input); border-radius:0; padding:10px; background:var(--bg-input); color:var(--paper); font:12px/1.35 var(--font-small); outline:none; } textarea:focus { box-shadow:4px 4px 0 var(--red); } textarea::placeholder{ color:var(--amber); opacity:1; }
+    .setting { display:flex; justify-content:space-between; align-items:center; gap:8px; font:11px var(--font-small); }.choice { width:140px; flex-shrink:0; border:1.5px solid var(--border-input); padding:5px 7px; background:var(--bg-input); color:var(--paper); font:inherit; border-radius:0; appearance:none; -webkit-appearance:none; }
     .xselect{position:relative;}
     .xselect-btn{display:flex;align-items:center;justify-content:space-between;text-align:left;cursor:pointer;gap:6px;appearance:none;-webkit-appearance:none;border-radius:0;}
+    .xselect-btn:hover{background:var(--ink);color:var(--amber);outline:1.5px solid var(--amber);outline-offset:-1.5px;}
     .xselect-btn:after{content:"▾";font-size:9px;opacity:.8;}
-    .xselect-list{position:absolute;top:calc(100% + 3px);left:0;width:100%;background:var(--bg-input);border:3px solid var(--border-input);border-radius:0;z-index:20;max-height:220px;overflow-y:auto;}
+    .xselect-list{position:absolute;top:calc(100% + 3px);left:0;width:100%;background:var(--bg-input);border:1.5px solid var(--border-input);border-radius:0;z-index:20;max-height:220px;overflow-y:auto;}
     .xselect-opt{padding:5px 7px;font:11px var(--font-small);color:var(--paper);cursor:pointer;}
-    .xselect-opt:hover,.xselect-opt.hl{background:var(--red);color:var(--ink);}
+    .xselect-opt:hover,.xselect-opt.hl{background:var(--ink);color:var(--amber);outline:1.5px solid var(--amber);outline-offset:-1.5px;}
     .xselect-opt[aria-selected="true"]{color:var(--red);}
     .xselect-backdrop{display:none;}
     #model { height:30.5px; margin-left:auto; background:var(--amber); color:transparent; }
     #model.outline { background:var(--bg-input); color:var(--paper); }
-    button { border:0; cursor:pointer; letter-spacing:.08em; }.send { width:var(--input-col-width,322px); height:30.5px; display:flex; align-items:center; justify-content:center; padding:0 11px; background:var(--red); color:var(--ink); font-size:11px; transition:.18s; }.send:hover { background:var(--send-hover); transform:translateY(-2px); }.send:disabled { opacity:.55; cursor:wait; }
+    button { border:0; cursor:pointer; letter-spacing:.08em; }.send { width:var(--input-col-width,322px); height:30.5px; display:flex; align-items:center; justify-content:center; padding:0 11px; background:var(--red); color:var(--ink); font-size:11px; transition:.18s; }.send:hover { background:var(--ink); color:var(--amber); outline:1.5px solid var(--amber); outline-offset:-1.5px; }.send:disabled { opacity:.55; cursor:wait; }
     main { grid-row:1; position:relative; padding:12px clamp(22px,4vw,64px) 16px; background:var(--bg-main); overflow:hidden; }
     .top-rule{position:absolute;left:0;right:0;height:4px;background:var(--border-topbar);z-index:5;}
     .ambience-toggle{display:inline-flex;align-items:center;gap:8px;margin-left:15px;font:500 10px var(--font-small);letter-spacing:.16em;text-transform:uppercase;color:var(--amber);cursor:pointer;user-select:none;}
@@ -101,6 +104,7 @@
     .consensus.visible{opacity:1;visibility:visible;pointer-events:auto;}
     .consensus>*{position:relative;z-index:1;}
     .consensus-close{position:absolute;top:6px;right:8px;z-index:2;background:none;border:none;color:var(--amber);font:700 22px var(--font-big);cursor:pointer;line-height:1;padding:6px 10px;}
+    .consensus-close:hover{background:var(--ink);outline:1.5px solid var(--amber);outline-offset:-1.5px;}
     .consensus-title { padding:18px; background:var(--amber); color:var(--ink); font:700 21px/.85 var(--font-accent); text-transform:none; letter-spacing:.06em; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; }.consensus-title small { display:block; margin-top:8px; font:10px var(--font-small); letter-spacing:0; }.consensus-body { padding:18px 21px; min-height:140px; background:var(--bg-main); overflow:hidden; }
     .consensus.fixed-height .consensus-body{ height:140px; overflow-y:auto; }.consensus-body p { margin:0; font-size:16px; line-height:1.45; }.confidence { margin-top:13px; color:var(--amber); font:10px var(--font-small); letter-spacing:.1em; }
     .consensus-body.revealing{position:relative;}
@@ -114,12 +118,13 @@
 <body>
   <div id="preScreen"><label class="ambience-toggle" id="fullscreenPreToggle"><input type="checkbox" id="fullscreenCheckbox">FULL SCREEN</label><button type="button" class="send" id="preScreenEnter">ENTER</button></div>
   <div id="bootScreen" aria-hidden="true"><pre id="bootCode"></pre></div>
+  <div id="customCursor" aria-hidden="true"></div>
   <div class="edge-blur" aria-hidden="true"></div>
   <div class="shell"><aside><div class="side-content">
     <div class="module">
       <div class="module-top">
         <div class="terminal-desc"><div class="brand"><i class="brand-mark"></i> MOGI SYSTEM / ψ-01</div><h1>TERMINAL</h1><p class="subtitle">THREE MINDS. ONE VERDICT.<br>OPERATING INDEPENDENTLY.</p></div>
-        <div class="settings-col"><div class="setting"><span class="setting-label">DECISION MODE</span> <div class="xselect" data-select="mode"><button type="button" class="choice xselect-btn" aria-haspopup="listbox" aria-expanded="false">Balanced</button><div class="xselect-list" role="listbox" hidden></div></div><select class="choice" id="mode" hidden><option>Balanced</option><option>Cautious</option><option>Decisive</option></select></div><div class="setting"><span class="setting-label">SYSTEM CONNECTION</span> <div class="xselect" data-select="engine"><button type="button" class="choice xselect-btn" aria-haspopup="listbox" aria-expanded="false">SOFT</button><div class="xselect-list" role="listbox" hidden></div></div><select class="choice" id="engine" hidden><option value="local">STRONG</option><option value="demo" selected>SOFT</option></select></div><label class="setting" id="modelLine"><input class="choice" id="model" value="qwen2.5:3b" aria-label="Local model name" /></label></div>
+        <div class="settings-col"><div class="setting"><span class="setting-label">DECISION MODE</span> <div class="xselect" data-select="mode"><button type="button" class="choice xselect-btn" aria-haspopup="listbox" aria-expanded="false">Balanced</button><div class="xselect-list" role="listbox" hidden></div></div><select class="choice" id="mode" hidden><option>Balanced</option><option>Cautious</option><option>Decisive</option></select></div><div class="setting"><span class="setting-label">SYSTEM CONNECTION</span> <div class="xselect" data-select="engine"><button type="button" class="choice xselect-btn" aria-haspopup="listbox" aria-expanded="false">SOFT</button><div class="xselect-list" role="listbox" hidden></div></div><select class="choice" id="engine" hidden><option value="local">STRONG</option><option value="webllm">ONBOARD</option><option value="demo" selected>SOFT</option></select></div><label class="setting" id="modelLine"><input class="choice" id="model" value="qwen2.5:3b" aria-label="Local model name" /></label></div>
       </div>
       <div class="input-col"><button class="send" id="submit">INITIALIZE CONSULTATION</button><textarea id="query" placeholder="State your inquiry for consultation..."></textarea></div>
     </div></div></aside>
@@ -128,6 +133,44 @@
       <section class="consensus" id="consensusPanel"><button class="consensus-close" id="consensusClose" aria-label="Close">×</button><div class="consensus-title">CONSENSUS<br>PROTOCOL<small id="state">NO DATA</small></div><div class="consensus-body" id="consensusBody"><p id="final" class="empty">The final recommendation requires a submitted inquiry.</p><div class="confidence" id="confidence">CONFIDENCE —</div></div></section>
     </main></div>
     <div class="xselect-backdrop" id="xselectBackdrop" aria-hidden="true"></div>
+  <script type="module">
+    import * as webllm from 'https://esm.run/@mlc-ai/web-llm';
+    let enginePromise=null, engineReady=false, chosenModelId=null;
+    function paramCountB(id){
+      const m=id.match(/-(\d+(?:\.\d+)?)([BM])-/);
+      if(!m) return null;
+      return m[2]==='M' ? parseFloat(m[1])/1000 : parseFloat(m[1]);
+    }
+    function pickModel(){
+      const list=webllm.prebuiltAppConfig.model_list.filter(m=>/Instruct/i.test(m.model_id) && m.vram_required_MB);
+      const sized=list.map(m=>({...m,paramsB:paramCountB(m.model_id)})).filter(m=>m.paramsB!=null);
+      const band=sized.filter(m=>m.paramsB>=0.9 && m.paramsB<=2 && /q4/i.test(m.model_id));
+      const pool=band.length?band:sized.filter(m=>m.paramsB>=0.9);
+      const final=(pool.length?pool:sized.length?sized:list).slice().sort((a,b)=>(a.vram_required_MB||Infinity)-(b.vram_required_MB||Infinity));
+      return final[0].model_id;
+    }
+    window.MogiWebLLM={
+      supported:!!navigator.gpu,
+      init(onProgress){
+        if(!navigator.gpu) return Promise.reject(Object.assign(new Error('This browser does not support WebGPU.'),{kind:'NO_WEBGPU'}));
+        if(!enginePromise){
+          chosenModelId=pickModel();
+          enginePromise=webllm.CreateMLCEngine(chosenModelId,{initProgressCallback:onProgress})
+            .then(engine=>{ engineReady=true; return engine; })
+            .catch(e=>{ enginePromise=null; throw e; });
+        }
+        return enginePromise;
+      },
+      isReady(){ return engineReady; },
+      modelId(){ return chosenModelId; },
+      async chat(prompt){
+        const engine=await enginePromise;
+        const reply=await engine.chat.completions.create({messages:[{role:'user',content:prompt}]});
+        return reply.choices[0].message.content;
+      }
+    };
+    window.dispatchEvent(new Event('mogi-webllm-ready'));
+  </script>
   <script>
     const $=s=>document.querySelector(s);
     const loopAudioCtx=new (window.AudioContext||window.webkitAudioContext)();
@@ -503,12 +546,53 @@
       if(typeof data.response!=='string'){ const err=new Error('The local model returned no text.'); err.kind='BAD_RESPONSE'; throw err; }
       return data.response.trim();
     }
-    async function consultLocal(q,mode){ const common=`You are one partition of a fictional three-mind decision system. Answer the user inquiry directly and specifically, in a wise, formal, concrete tone — grounded and kind, never vague or hedging for its own sake. Decision mode: ${mode}. Do not mention being an AI. Keep it under 125 words. Inquiry: ${q}`; const roles=[`You are EC-31, a rigorous systems scientist. Focus on evidence, uncertainty, trade-offs, and tests. End with a vote: YES, NO, or CONDITIONAL.`, `You are RS-27, a compassionate humanist. Focus on values, wellbeing, relationships, and lived consequences. End with a vote: YES, NO, or CONDITIONAL.`, `You are JM-21, a practical decisive strategist. Focus on agency, timing, leverage, and the next concrete action. End with a vote: YES, NO, or CONDITIONAL.`]; const analyses=await Promise.all(roles.map(role=>askLocal(role+'\n\n'+common))); const raw=await askLocal(`You are the MOGI consensus protocol. Given this inquiry and three independent reports, state a concise, useful final recommendation in 2–4 sentences, in a wise, formal, concrete tone — grounded and kind, never vague. Name conditions or a next step. Do not mention AI or the reports. On a final separate line, write LEAD: followed by exactly one of EC-31, RS-27, or JM-21—the partition whose reasoning most shaped the outcome.\n\nInquiry: ${q}\n\nEC-31: ${analyses[0]}\n\nRS-27: ${analyses[1]}\n\nJM-21: ${analyses[2]}`); const match=raw.match(/(?:^|\n|\s)LEAD:\s*(EC-31|RS-27|JM-21)\s*$/i); return {analyses,synthesis:raw.replace(/(?:^|\n|\s)LEAD:\s*(EC-31|RS-27|JM-21)\s*$/i,'').trim(),lead:match?match[1]:'EC-31'}; }
-    try{ const savedModel=localStorage.getItem('mogiModel'); if(savedModel) $('#model').value=savedModel; const savedEngine=localStorage.getItem('mogiEngine'); if(savedEngine) $('#engine').value=savedEngine; }catch{}
-    function updateModelStyle(){ $('#model').classList.toggle('outline',$('#engine').value==='local'); }
-    $('#engine').onchange=()=>{ updateModelStyle(); try{ localStorage.setItem('mogiEngine',$('#engine').value); }catch{} };
+    function buildConsultPrompts(q,mode){
+      const common=`You are one partition of a fictional three-mind decision system. Answer the user inquiry directly and specifically, in a wise, formal, concrete tone — grounded and kind, never vague or hedging for its own sake. Decision mode: ${mode}. Do not mention being an AI. Keep it under 125 words. Inquiry: ${q}`;
+      const roles=[`You are EC-31, a rigorous systems scientist. Focus on evidence, uncertainty, trade-offs, and tests. End with a vote: YES, NO, or CONDITIONAL.`, `You are RS-27, a compassionate humanist. Focus on values, wellbeing, relationships, and lived consequences. End with a vote: YES, NO, or CONDITIONAL.`, `You are JM-21, a practical decisive strategist. Focus on agency, timing, leverage, and the next concrete action. End with a vote: YES, NO, or CONDITIONAL.`];
+      const prompts=roles.map(role=>role+'\n\n'+common);
+      const synthesisPrompt=(analyses)=>`You are the MOGI consensus protocol. Given this inquiry and three independent reports, state a concise, useful final recommendation in 2–4 sentences, in a wise, formal, concrete tone — grounded and kind, never vague. Name conditions or a next step. Do not mention AI or the reports. On a final separate line, write LEAD: followed by exactly one of EC-31, RS-27, or JM-21—the partition whose reasoning most shaped the outcome.\n\nInquiry: ${q}\n\nEC-31: ${analyses[0]}\n\nRS-27: ${analyses[1]}\n\nJM-21: ${analyses[2]}`;
+      return {prompts,synthesisPrompt};
+    }
+    function parseLeadResponse(raw){
+      const match=raw.match(/(?:^|\n|\s)LEAD:\s*(EC-31|RS-27|JM-21)\s*$/i);
+      return {synthesis:raw.replace(/(?:^|\n|\s)LEAD:\s*(EC-31|RS-27|JM-21)\s*$/i,'').trim(),lead:match?match[1]:'EC-31'};
+    }
+    async function consultLocal(q,mode){
+      const {prompts,synthesisPrompt}=buildConsultPrompts(q,mode);
+      const analyses=await Promise.all(prompts.map(p=>askLocal(p)));
+      const raw=await askLocal(synthesisPrompt(analyses));
+      return {analyses,...parseLeadResponse(raw)};
+    }
+    async function consultWebLLM(q,mode){
+      const {prompts,synthesisPrompt}=buildConsultPrompts(q,mode);
+      const analyses=await Promise.all(prompts.map(p=>window.MogiWebLLM.chat(p)));
+      const raw=await window.MogiWebLLM.chat(synthesisPrompt(analyses));
+      return {analyses,...parseLeadResponse(raw)};
+    }
+    let savedLocalModelName='qwen2.5:3b';
+    try{ const savedModel=localStorage.getItem('mogiModel'); if(savedModel) savedLocalModelName=savedModel; const savedEngine=localStorage.getItem('mogiEngine'); if(savedEngine) $('#engine').value=savedEngine; }catch{}
+    function webllmStatusText(){
+      if(!window.MogiWebLLM||!window.MogiWebLLM.supported) return 'WEBGPU NOT SUPPORTED';
+      if(window.MogiWebLLM.isReady()) return 'MODEL READY';
+      return 'TAP TO LOAD MODEL';
+    }
+    function updateModelStyle(){
+      const engineVal=$('#engine').value, modelEl=$('#model');
+      modelEl.classList.toggle('outline',engineVal==='local'||engineVal==='webllm');
+      modelEl.readOnly=engineVal==='webllm';
+      if(engineVal==='webllm') modelEl.value=webllmStatusText();
+      else if(engineVal==='local') modelEl.value=savedLocalModelName;
+    }
+    function initWebLLM(){
+      if(!window.MogiWebLLM||!window.MogiWebLLM.supported||window.MogiWebLLM.isReady()){ updateModelStyle(); return; }
+      window.MogiWebLLM.init((p)=>{ if($('#engine').value==='webllm') $('#model').value=(p.progress!=null?Math.round(p.progress*100)+'%':(p.text||'LOADING…')); })
+        .then(updateModelStyle).catch(updateModelStyle);
+    }
+    $('#engine').onchange=()=>{ updateModelStyle(); try{ localStorage.setItem('mogiEngine',$('#engine').value); }catch{} if($('#engine').value==='webllm') initWebLLM(); };
     updateModelStyle();
-    $('#model').onchange=()=>{ try{ localStorage.setItem('mogiModel',$('#model').value.trim()); }catch{} };
+    if(window.MogiWebLLM){ if($('#engine').value==='webllm') initWebLLM(); }
+    else { window.addEventListener('mogi-webllm-ready',()=>{ updateModelStyle(); if($('#engine').value==='webllm') initWebLLM(); },{once:true}); }
+    $('#model').onchange=()=>{ if($('#engine').value!=='local') return; savedLocalModelName=$('#model').value.trim(); try{ localStorage.setItem('mogiModel',savedLocalModelName); }catch{} };
     function initXSelect(wrap){
       const select=document.getElementById(wrap.dataset.select);
       const btn=wrap.querySelector('.xselect-btn'), list=wrap.querySelector('.xselect-list');
@@ -536,6 +620,7 @@
     function describeLocalError(e){
       const model=$('#model').value.trim();
       if(e.kind==='NO_MODEL') return {final:`Enter a model name in the LOCAL MODEL field first (e.g. qwen2.5:3b), then try again. You can switch to DEMO MODE to use the prototype without a model.`};
+      if(e.kind==='NO_WEBGPU') return {final:`This browser doesn't support WebGPU, which the onboard model needs to run. Try a recent desktop version of Chrome, Edge, or Opera. You can switch to DEMO MODE to use the prototype without a model, or STRONG for a local Ollama connection.`};
       if(e.kind==='TIMEOUT') return {final:`Ollama didn't respond within ${OLLAMA_TIMEOUT_MS/1000}s. It may still be loading the model into memory — try again in a moment, or use a smaller/faster model. You can switch to DEMO MODE to use the prototype without a model.`};
       if(e.kind==='UNREACHABLE') return {final:`Could not reach Ollama at 127.0.0.1:11434. Make sure it's installed and running (ollama serve). If this page isn't loaded from localhost, Ollama will also refuse the request unless you set OLLAMA_ORIGINS to include this site's origin. You can switch to DEMO MODE to use the prototype without a model.`};
       if(e.kind==='MODEL_NOT_FOUND') return {final:`Ollama is running, but the model "${model}" isn't pulled. Run: ollama pull ${model} — then try again. You can switch to DEMO MODE to use the prototype without a model.`};
@@ -545,7 +630,35 @@
     }
     function revealConsensus(){ $('#consensusPanel').classList.add('visible'); const body=$('#consensusBody'); body.classList.add('revealing'); playAlert(); setTimeout(()=>{ body.classList.remove('revealing'); },300); }
     $('#consensusClose').onclick=()=>{ $('#consensusPanel').classList.remove('visible'); };
-    $('#submit').onclick=async()=>{ const q=$('#query').value.trim(); if(!q){$('#query').focus();return} const btn=$('#submit'),local=$('#engine').value==='local';btn.disabled=true;btn.textContent='PARTITIONS PROCESSING…'; $('#state').textContent='PROCESSING'; clearTimeout(revertTimer); document.querySelectorAll('.agent.non-lead,.agent.lead').forEach(a=>a.classList.remove('non-lead','lead')); $('#consensusPanel').classList.remove('visible'); discussing(true); try { if(local){ $('.consensus').classList.remove('fixed-height'); const r=await consultLocal(q,$('#mode').value); render(r.synthesis,'CONFIDENCE / LOCAL CONSENSUS'); } else { $('.consensus').classList.add('fixed-height'); await new Promise(r=>setTimeout(r,1800+Math.random()*600)); const a=makeAnalysis(q,$('#mode').value); render(a.final,'CONFIDENCE '+a.conf); } $('#state').textContent='APPROVED'; revealConsensus(); } catch(e) { $('#state').textContent='OFFLINE'; const d=describeLocalError(e); $('#final').textContent=d.final; $('#final').classList.remove('empty'); $('#confidence').textContent='CONFIDENCE — LOCAL MODEL OFFLINE'; updateWingReadout(); revealConsensus(); } finally {discussing(false);btn.disabled=false;btn.textContent='RUN NEW CONSULTATION';} };
+    $('#submit').onclick=async()=>{
+      const q=$('#query').value.trim(); if(!q){$('#query').focus();return}
+      const btn=$('#submit'), engineVal=$('#engine').value;
+      btn.disabled=true;btn.textContent='PARTITIONS PROCESSING…'; $('#state').textContent='PROCESSING';
+      clearTimeout(revertTimer); document.querySelectorAll('.agent.non-lead,.agent.lead').forEach(a=>a.classList.remove('non-lead','lead'));
+      $('#consensusPanel').classList.remove('visible'); discussing(true);
+      try {
+        if(engineVal==='local'){
+          $('.consensus').classList.remove('fixed-height');
+          const r=await consultLocal(q,$('#mode').value); render(r.synthesis,'CONFIDENCE / LOCAL CONSENSUS');
+        } else if(engineVal==='webllm'){
+          $('.consensus').classList.remove('fixed-height');
+          if(!window.MogiWebLLM.isReady()) await window.MogiWebLLM.init((p)=>{ $('#model').value=(p.progress!=null?Math.round(p.progress*100)+'%':(p.text||'LOADING…')); });
+          const r=await consultWebLLM(q,$('#mode').value); render(r.synthesis,'CONFIDENCE / ONBOARD CONSENSUS');
+          updateModelStyle();
+        } else {
+          $('.consensus').classList.add('fixed-height');
+          await new Promise(r=>setTimeout(r,1800+Math.random()*600));
+          const a=makeAnalysis(q,$('#mode').value); render(a.final,'CONFIDENCE '+a.conf);
+        }
+        $('#state').textContent='APPROVED'; revealConsensus();
+      } catch(e) {
+        $('#state').textContent='OFFLINE'; const d=describeLocalError(e);
+        $('#final').textContent=d.final; $('#final').classList.remove('empty');
+        $('#confidence').textContent='CONFIDENCE — '+(engineVal==='webllm'?'ONBOARD MODEL OFFLINE':'LOCAL MODEL OFFLINE');
+        updateWingReadout(); revealConsensus();
+        if(engineVal==='webllm') updateModelStyle();
+      } finally {discussing(false);btn.disabled=false;btn.textContent='RUN NEW CONSULTATION';}
+    };
     function positionTopRule(){ const rule=$('#topRule'),topbar=document.querySelector('.topbar'),mainEl=document.querySelector('main'); if(!rule||!topbar||!mainEl) return; const mainRect=mainEl.getBoundingClientRect(),tbRect=topbar.getBoundingClientRect(); rule.style.top=(tbRect.bottom-mainRect.top+6)+'px'; }
     function layoutAll(){ layoutMagi(); positionTopRule(); }
     $('#mode').onchange=updateWingReadout; updateWingReadout();
@@ -599,6 +712,17 @@
         }
       };
       document.addEventListener('fullscreenchange',()=>{ topbarCb.checked=!!document.fullscreenElement; });
+    })();
+    (function(){
+      if(!window.matchMedia('(pointer:fine)').matches) return;
+      const cursor=$('#customCursor');
+      if(!cursor) return;
+      let x=0,y=0,raf=null;
+      document.addEventListener('mousemove',(e)=>{
+        x=e.clientX; y=e.clientY;
+        if(raf) return;
+        raf=requestAnimationFrame(()=>{ cursor.style.left=x+'px'; cursor.style.top=y+'px'; raf=null; });
+      });
     })();
   </script>
 </body></html>
