@@ -8,6 +8,9 @@
     @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&display=swap');
     :root { --ink:#101110; --paper:#F76C1B; --line:#F76C1B; --red:#F76C1B; --rust:#2f6843; --amber:#F76C1B; --cyan:#F76C1B; --triangle:#F76C1B; --triangle-rgb:247,108,27; --muted:#F76C1B; --box-idle:#2596be; --box-idle-rgb:37,150,190; --box-hover:#39BEEF; --box-hover-rgb:57,190,239; --wing-color:#38B556; --bg-body:#090A09; --bg-aside:#0E0F0D; --bg-input:#161715; --bg-main:#0B0C0B; --border-input:#F76C1B; --border-module:#F76C1B; --border-topbar:#F76C1B; --text-status:#F76C1B; --send-hover:#FFCC33; --consensus-tint-rgb:53,226,173; --font-big:'Helvetica Neue',Helvetica,Arial,sans-serif; --font-small:'IBM Plex Mono',monospace; --font-accent:'Georgia Pro Condensed',Georgia,serif; }
     * { box-sizing:border-box; } html{filter:blur(.07px);} body { margin:0; min-height:100vh; background:var(--bg-body); color:var(--paper); font-family:var(--font-small); }
+    #bootScreen{position:fixed;inset:0;z-index:99999;background:#000;overflow:hidden;}
+    #bootCode{margin:0;padding:40px 32px;color:var(--amber);font:11px/1.5 var(--font-small);white-space:pre-wrap;word-break:break-all;}
+    #bootScreen.done{display:none;}
     .edge-blur{position:fixed;inset:0;z-index:9997;pointer-events:none;backdrop-filter:blur(.4px);-webkit-backdrop-filter:blur(.4px);mask-image:radial-gradient(ellipse 60% 60% at 50% 50%,transparent 0%,black 100%);-webkit-mask-image:radial-gradient(ellipse 60% 60% at 50% 50%,transparent 0%,black 100%);}
     body:before{content:"";position:fixed;inset:0;z-index:9999;pointer-events:none;background:radial-gradient(ellipse 75% 75% at 50% 50%,transparent 60%,rgba(0,0,0,.18) 100%);}
     body:after{content:"";position:fixed;inset:0;z-index:9998;pointer-events:none;box-shadow:inset 0 0 120px 40px rgba(0,0,0,.15);border-radius:22px;}
@@ -100,6 +103,7 @@
   </style>
 </head>
 <body>
+  <div id="bootScreen" aria-hidden="true"><pre id="bootCode"></pre></div>
   <div class="edge-blur" aria-hidden="true"></div>
   <div class="shell"><aside><div class="side-content">
     <div class="module">
@@ -536,5 +540,21 @@
     function layoutAll(){ layoutMagi(); positionTopRule(); }
     $('#mode').onchange=updateWingReadout; updateWingReadout();
     window.addEventListener('resize',layoutAll); requestAnimationFrame(layoutAll); document.fonts?.ready?.then(layoutAll); setInterval(()=>$('#clock').innerHTML=new Date().toLocaleTimeString([], {hour:'2-digit',minute:'2-digit',second:'2-digit'})+'<br><span>LOCAL SYSTEM TIME</span>',1000);
+    (function(){
+      const screen=$('#bootScreen'), codeEl=$('#bootCode');
+      if(!screen||!codeEl) return;
+      const finish=()=>screen.classList.add('done');
+      fetch(window.location.href).then(r=>r.text()).then(src=>{
+        codeEl.textContent=src;
+        requestAnimationFrame(()=>{
+          const dist=codeEl.scrollHeight;
+          if(!dist){ finish(); return; }
+          codeEl.addEventListener('transitionend',finish,{once:true});
+          codeEl.style.transition='transform 2s linear';
+          codeEl.style.transform=`translateY(-${dist}px)`;
+          setTimeout(finish,2400);
+        });
+      }).catch(finish);
+    })();
   </script>
 </body></html>
