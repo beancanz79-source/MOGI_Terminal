@@ -18,6 +18,8 @@
     #preScreen .ambience-toggle input{width:16px;height:16px;}
     #preScreenEnter{width:180px;}
     #bootScreen{position:fixed;inset:0;z-index:99999;background:#000;overflow:hidden;}
+    #bootSymbol{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);z-index:2;color:var(--amber);font-family:var(--font-accent);font-style:italic;font-weight:700;line-height:1;font-size:23.3vw;pointer-events:none;}
+    @media (max-width:600px){ #bootSymbol{font-size:58.3vw;} }
     #bootCode{margin:0;padding:40px 32px;color:var(--amber);font:11px/1.5 var(--font-small);white-space:pre-wrap;word-break:break-all;}
     #bootCode.align-right{text-align:right;}
     #bootCode .boxed{display:inline-block;border:1px solid var(--amber);padding:0 3px;}
@@ -111,26 +113,32 @@
     .consensus-body.revealing:before{content:"";position:absolute;top:3px;bottom:3px;left:calc(3px - var(--sweep-px,712px));width:calc(100% - 6px + var(--sweep-px,712px));background:repeating-linear-gradient(40deg,var(--ink) 0 23.33px,rgba(var(--triangle-rgb),.4) 23.33px 46.67px);background-size:46.67px 46.67px;animation:stripeSweep .3s linear 1 forwards;}
     .consensus-body.revealing p,.consensus-body.revealing .confidence{visibility:hidden;}
     @keyframes stripeSweep{from{transform:translateX(0);}to{transform:translateX(var(--sweep-px,712px));}}
+    #directLoading{display:none;flex-direction:column;align-items:center;gap:12px;padding:8px 0;}
+    #directLoading:not([hidden]){display:flex;}
+    #directLoading .direct-loading-label{color:var(--amber);font:700 12px var(--font-small);letter-spacing:.15em;text-transform:uppercase;}
+    #directLoadingBar{width:100%;max-width:320px;height:24px;border:1.5px solid var(--amber);position:relative;overflow:hidden;background:var(--bg-main);}
+    #directLoadingBar .fill{position:absolute;top:0;bottom:0;left:0;width:0%;background:repeating-linear-gradient(40deg,var(--ink) 0 11.67px,var(--amber) 11.67px 23.33px);background-size:23.33px 23.33px;transition:width .25s linear;}
+    #directLoadingBar .pct{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:var(--paper);font:700 11px var(--font-small);mix-blend-mode:difference;}
     .empty { opacity:.66; }.hidden { display:none; } @media (max-width:850px){ .consensus{width:100%;grid-template-columns:1fr} }
-    @media (max-width:600px){ h1{font-size:22px;} .brand{font-size:9px;gap:6px;} .brand-mark{width:18px;height:18px;}.brand-mark:after{inset:3px;} .subtitle{font-size:9px;max-width:130px;} .choice{width:95px;} .setting{font-size:9px;gap:5px;} .setting:not(#modelLine){padding-left:8px;} aside{padding-left:6px;padding-right:6px;} .module-top{gap:10px;} .agent.top{min-height:130px;width:min(220px,100%);} .agents{column-gap:clamp(70px,28vw,140px);margin-top:26px;} main{padding-top:16px;} .wing-readout{font-size:7px;} .agent{padding:22px 8px;} .agent h3{font-size:18px;} .agent h3 .frame{top:-1.5px;bottom:-1.5px;} .baybayin .line:before,.baybayin .line:after{border-width:1px;} .consensus-close{color:var(--bg-main);} .xselect-backdrop.open{display:block;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:39;} .xselect-list{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);width:min(220px,82vw);max-height:70vh;overflow-y:auto;z-index:40;box-shadow:0 0 20px rgba(var(--triangle-rgb),.5);} .xselect-opt{font:16px var(--font-small);padding:12px 14px;} }
+    @media (max-width:600px){ h1{font-size:22px;} .brand{font-size:9px;gap:6px;} .brand-mark{width:18px;height:18px;}.brand-mark:after{inset:3px;} .subtitle{font-size:9px;max-width:130px;} .choice{width:95px;} .setting{font-size:9px;gap:5px;} .setting:not(#modelLine){padding-left:8px;} aside{padding-left:6px;padding-right:6px;} .module-top{gap:10px;} .agent.top{min-height:130px;width:min(220px,100%);} .agents{column-gap:clamp(70px,28vw,140px);margin-top:26px;} main{padding-top:16px;} .wing-readout{font-size:7px;} .agent{padding:22px 8px;} .agent h3{font-size:18px;} .agent h3 .frame{top:-1.5px;bottom:-1.5px;} .baybayin .line{height:14px;} .baybayin .line:before,.baybayin .line:after{border-width:1px;} .consensus-close{color:var(--bg-main);} .xselect-backdrop.open{display:block;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:39;} .xselect-list{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);width:min(220px,82vw);max-height:70vh;overflow-y:auto;z-index:40;box-shadow:0 0 20px rgba(var(--triangle-rgb),.5);} .xselect-opt{font:16px var(--font-small);padding:12px 14px;} }
   </style>
 </head>
 <body>
   <div id="preScreen"><label class="ambience-toggle" id="fullscreenPreToggle"><input type="checkbox" id="fullscreenCheckbox">FULL SCREEN</label><button type="button" class="send" id="preScreenEnter">ENTER</button></div>
-  <div id="bootScreen" aria-hidden="true"><pre id="bootCode"></pre></div>
+  <div id="bootScreen" aria-hidden="true"><pre id="bootCode"></pre><div id="bootSymbol">ψ</div></div>
   <div id="customCursor" aria-hidden="true"></div>
   <div class="edge-blur" aria-hidden="true"></div>
   <div class="shell"><aside><div class="side-content">
     <div class="module">
       <div class="module-top">
         <div class="terminal-desc"><div class="brand"><i class="brand-mark"></i> MOGI SYSTEM / ψ-01</div><h1>TERMINAL</h1><p class="subtitle">THREE MINDS. ONE VERDICT.<br>OPERATING INDEPENDENTLY.</p></div>
-        <div class="settings-col"><div class="setting"><span class="setting-label">DECISION MODE</span> <div class="xselect" data-select="mode"><button type="button" class="choice xselect-btn" aria-haspopup="listbox" aria-expanded="false">Balanced</button><div class="xselect-list" role="listbox" hidden></div></div><select class="choice" id="mode" hidden><option>Balanced</option><option>Cautious</option><option>Decisive</option></select></div><div class="setting"><span class="setting-label">SYSTEM CONNECTION</span> <div class="xselect" data-select="engine"><button type="button" class="choice xselect-btn" aria-haspopup="listbox" aria-expanded="false">SOFT</button><div class="xselect-list" role="listbox" hidden></div></div><select class="choice" id="engine" hidden><option value="local">STRONG</option><option value="webllm">ONBOARD</option><option value="demo" selected>SOFT</option></select></div><label class="setting" id="modelLine"><input class="choice" id="model" value="qwen2.5:3b" aria-label="Local model name" /></label></div>
+        <div class="settings-col"><div class="setting"><span class="setting-label">DECISION MODE</span> <div class="xselect" data-select="mode"><button type="button" class="choice xselect-btn" aria-haspopup="listbox" aria-expanded="false">Balanced</button><div class="xselect-list" role="listbox" hidden></div></div><select class="choice" id="mode" hidden><option>Balanced</option><option>Cautious</option><option>Decisive</option></select></div><div class="setting"><span class="setting-label">SYSTEM CONNECTION</span> <div class="xselect" data-select="engine"><button type="button" class="choice xselect-btn" aria-haspopup="listbox" aria-expanded="false">SOFT</button><div class="xselect-list" role="listbox" hidden></div></div><select class="choice" id="engine" hidden><option value="local">STRONG</option><option value="demo" selected>SOFT</option></select></div><div class="setting" id="modelLine"><span class="setting-label">LLM OPTIONS</span> <div class="xselect" data-select="strongLine"><button type="button" class="choice xselect-btn" aria-haspopup="listbox" aria-expanded="false">ONBOARD LINE</button><div class="xselect-list" role="listbox" hidden></div></div><select class="choice" id="strongLine" hidden><option value="onboard">ONBOARD LINE</option><option value="ollama">QWEN LOCAL LINE</option></select></div><label class="setting" id="modelNameLine"><input class="choice outline" id="model" value="qwen2.5:3b" aria-label="Local model name" /></label></div>
       </div>
       <div class="input-col"><button class="send" id="submit">INITIALIZE CONSULTATION</button><textarea id="query" placeholder="State your inquiry for consultation..."></textarea></div>
     </div></div></aside>
     <main><div class="top-rule" id="topRule"></div><div class="topbar"><div><div class="system">MOGI CORE // CONSULTATION NODE<label class="ambience-toggle" id="ambienceToggle"><input type="checkbox" id="ambienceCheckbox">BACKGROUND PROCESSING</label><label class="ambience-toggle" id="fullscreenToggle"><input type="checkbox" id="fullscreenTopbarCheckbox">FULL SCREEN</label></div><div class="status"><i class="pulse"></i> NEURAL PARTITIONS: STANDBY</div></div><div class="clock" id="clock">—<br><span>LOCAL SYSTEM TIME</span></div></div>
       <section class="agents" id="agents"><article class="agent top"><div class="agent-id">MOGI-01</div><h3><span class="frame" aria-hidden="true"></span>EC-31</h3><p class="tag">LOGICAL</p></article><article class="agent left"><div class="agent-id">MOGI-02</div><h3><span class="frame" aria-hidden="true"></span>RS-27</h3><p class="tag">RATIONAL</p></article><article class="agent right"><div class="agent-id">MOGI-03</div><h3><span class="frame" aria-hidden="true"></span>JM-21</h3><p class="tag">EMPIRICAL</p></article><div class="magi-links" aria-hidden="true"><span class="magi-line" id="lineL"></span><span class="magi-line" id="lineR"></span><span class="magi-line" id="lineB"></span></div><div class="magi-core" id="magiCore"><span class="word">MOGI</span><span class="rule"></span></div><div class="baybayin left" id="baybayinL" aria-hidden="true"><span class="line top"></span><span class="glyph">[ᜋ]ᜃᜊᜄᜓᜅ᜔ [ᜂ]ᜉᜒᜇᜐ᜔ᜌᜓᜅ᜔</span><span class="line bottom"></span></div><div class="baybayin right" id="baybayinR" aria-hidden="true"><span class="line top"></span><span class="glyph">[ᜄ᜔]ᜂᜋᜄᜊᜌ᜔ ᜐ [ᜁ]ᜐᜒᜉᜈ᜔</span><span class="line bottom"></span></div><div class="wing-readout" id="wingReadout" aria-hidden="true"><span id="wrConfidence">CONFIDENCE: —</span><span id="wrMode">DECISION MODE: BALANCED</span></div></section>
-      <section class="consensus" id="consensusPanel"><button class="consensus-close" id="consensusClose" aria-label="Close">×</button><div class="consensus-title">CONSENSUS<br>PROTOCOL<small id="state">NO DATA</small></div><div class="consensus-body" id="consensusBody"><p id="final" class="empty">The final recommendation requires a submitted inquiry.</p><div class="confidence" id="confidence">CONFIDENCE —</div></div></section>
+      <section class="consensus" id="consensusPanel"><button class="consensus-close" id="consensusClose" aria-label="Close">×</button><div class="consensus-title">CONSENSUS<br>PROTOCOL<small id="state">NO DATA</small></div><div class="consensus-body" id="consensusBody"><p id="final" class="empty">The final recommendation requires a submitted inquiry.</p><div class="confidence" id="confidence">CONFIDENCE —</div><div id="directLoading" hidden><div class="direct-loading-label">ESTABLISHING ONBOARD LINE</div><div id="directLoadingBar"><div class="fill" id="directLoadingFill"></div><div class="pct" id="directLoadingPct">0%</div></div></div></div></section>
     </main></div>
     <div class="xselect-backdrop" id="xselectBackdrop" aria-hidden="true"></div>
   <script type="module">
@@ -389,6 +397,7 @@
     const LINE_THICKNESS=6;
     const WING_EDGE_GAP=8;
     const WING_TOP_GAP=5;
+    const NARROW_WING_GAP=4;
     const EDGE_INSET_FULL=5;
     const NARROW_SIDE_PAD=6;
     function layoutMagi(){const host=$('#agents');if(!host)return;const top=host.querySelector('.top'),left=host.querySelector('.left'),right=host.querySelector('.right'),lineL=$('#lineL'),lineR=$('#lineR'),lineB=$('#lineB'),core=$('#magiCore');if(!top||!left||!right||!lineL||!lineR||!lineB||!core)return;
@@ -455,8 +464,8 @@
           const centerAbsX=centerX+base.left;
           leftLen=Math.max(20,centerAbsX-(mainRect.left+NARROW_SIDE_PAD));
           rightLen=Math.max(20,(mainRect.right-NARROW_SIDE_PAD)-centerAbsX);
-          baybayinL.style.left=(centerX-WING_EDGE_GAP)+'px';
-          baybayinR.style.left=(centerX+WING_EDGE_GAP)+'px';
+          baybayinL.style.left=(centerX-NARROW_WING_GAP)+'px';
+          baybayinR.style.left=(centerX+NARROW_WING_GAP)+'px';
           baybayinL.style.top=(t.top-base.top-40)+'px';
           baybayinR.style.top=(t.top-base.top-40)+'px';
         } else {
@@ -476,7 +485,7 @@
           const avail=Math.max(10,lineLen-pad*2);
           const currentWidth=glyph.getBoundingClientRect().width;
           const currentSize=parseFloat(getComputedStyle(glyph).fontSize);
-          glyph.style.fontSize=(currentSize*(avail/currentWidth)+3.5)+'px';
+          glyph.style.fontSize=Math.max(8,currentSize*(avail/currentWidth)-3)+'px';
         };
         fillGlyph(baybayinL,leftLen); fillGlyph(baybayinR,rightLen);
         if(isNarrow){
@@ -571,29 +580,42 @@
       return {analyses,...parseLeadResponse(raw)};
     }
     let savedLocalModelName='qwen2.5:3b';
-    try{ const savedModel=localStorage.getItem('mogiModel'); if(savedModel) savedLocalModelName=savedModel; const savedEngine=localStorage.getItem('mogiEngine'); if(savedEngine) $('#engine').value=savedEngine; }catch{}
-    function webllmStatusText(){
-      if(!window.MogiWebLLM||!window.MogiWebLLM.supported) return 'WEBGPU NOT SUPPORTED';
-      if(window.MogiWebLLM.isReady()) return 'MODEL READY';
-      return 'TAP TO LOAD MODEL';
+    try{
+      const savedModel=localStorage.getItem('mogiModel'); if(savedModel) savedLocalModelName=savedModel;
+      const savedEngine=localStorage.getItem('mogiEngine'); if(savedEngine) $('#engine').value=savedEngine;
+      const savedLine=localStorage.getItem('mogiStrongLine'); if(savedLine) $('#strongLine').value=savedLine;
+    }catch{}
+    function parseModelFamily(name){
+      const m=(name||'').trim().match(/^[a-zA-Z]+/);
+      return m ? m[0].toUpperCase() : 'MODEL';
+    }
+    function refreshStrongLineLabel(){
+      const opt=$('#strongLine').querySelector('option[value="ollama"]');
+      if(opt) opt.textContent=parseModelFamily(savedLocalModelName)+' LOCAL LINE';
+      document.querySelector('[data-select="strongLine"]')?._refresh?.();
     }
     function updateModelStyle(){
-      const engineVal=$('#engine').value, modelEl=$('#model');
-      modelEl.classList.toggle('outline',engineVal==='local'||engineVal==='webllm');
-      modelEl.readOnly=engineVal==='webllm';
-      if(engineVal==='webllm') modelEl.value=webllmStatusText();
-      else if(engineVal==='local') modelEl.value=savedLocalModelName;
+      const engineVal=$('#engine').value, lineVal=$('#strongLine').value;
+      $('#modelLine').style.display=engineVal==='local'?'':'none';
+      $('#modelNameLine').style.display=(engineVal==='local'&&lineVal==='ollama')?'':'none';
+      $('#model').value=savedLocalModelName;
     }
-    function initWebLLM(){
-      if(!window.MogiWebLLM||!window.MogiWebLLM.supported||window.MogiWebLLM.isReady()){ updateModelStyle(); return; }
-      window.MogiWebLLM.init((p)=>{ if($('#engine').value==='webllm') $('#model').value=(p.progress!=null?Math.round(p.progress*100)+'%':(p.text||'LOADING…')); })
-        .then(updateModelStyle).catch(updateModelStyle);
+    function showDirectLoading(active){
+      const loader=$('#directLoading');
+      loader.hidden=!active;
+      $('#final').hidden=active; $('#confidence').hidden=active;
+      if(active) updateDirectLoading({progress:0});
     }
-    $('#engine').onchange=()=>{ updateModelStyle(); try{ localStorage.setItem('mogiEngine',$('#engine').value); }catch{} if($('#engine').value==='webllm') initWebLLM(); };
+    function updateDirectLoading(p){
+      const pct=p&&p.progress!=null?Math.round(p.progress*100):0;
+      $('#directLoadingFill').style.width=pct+'%';
+      $('#directLoadingPct').textContent=pct+'%';
+    }
+    refreshStrongLineLabel();
+    $('#engine').onchange=()=>{ updateModelStyle(); try{ localStorage.setItem('mogiEngine',$('#engine').value); }catch{} };
+    $('#strongLine').onchange=()=>{ updateModelStyle(); try{ localStorage.setItem('mogiStrongLine',$('#strongLine').value); }catch{} };
     updateModelStyle();
-    if(window.MogiWebLLM){ if($('#engine').value==='webllm') initWebLLM(); }
-    else { window.addEventListener('mogi-webllm-ready',()=>{ updateModelStyle(); if($('#engine').value==='webllm') initWebLLM(); },{once:true}); }
-    $('#model').onchange=()=>{ if($('#engine').value!=='local') return; savedLocalModelName=$('#model').value.trim(); try{ localStorage.setItem('mogiModel',savedLocalModelName); }catch{} };
+    $('#model').onchange=()=>{ savedLocalModelName=$('#model').value.trim(); try{ localStorage.setItem('mogiModel',savedLocalModelName); }catch{} refreshStrongLineLabel(); };
     function initXSelect(wrap){
       const select=document.getElementById(wrap.dataset.select);
       const btn=wrap.querySelector('.xselect-btn'), list=wrap.querySelector('.xselect-list');
@@ -616,12 +638,13 @@
       backdrop?.addEventListener('click',close);
       select.addEventListener('change',syncFromSelect);
       buildList(); syncFromSelect();
+      wrap._refresh=()=>{ buildList(); syncFromSelect(); };
     }
     document.querySelectorAll('.xselect').forEach(initXSelect);
     function describeLocalError(e){
       const model=$('#model').value.trim();
       if(e.kind==='NO_MODEL') return {final:`Enter a model name in the LOCAL MODEL field first (e.g. qwen2.5:3b), then try again. You can switch to DEMO MODE to use the prototype without a model.`};
-      if(e.kind==='NO_WEBGPU') return {final:`This browser doesn't support WebGPU, which the onboard model needs to run. Try a recent desktop version of Chrome, Edge, or Opera. You can switch to DEMO MODE to use the prototype without a model, or STRONG for a local Ollama connection.`};
+      if(e.kind==='NO_WEBGPU') return {final:`This browser doesn't support WebGPU, which the onboard line needs to run. Try a recent desktop version of Chrome, Edge, or Opera. You can switch to DEMO MODE to use the prototype without a model, or the LOCAL LINE for a local Ollama connection.`};
       if(e.kind==='TIMEOUT') return {final:`Ollama didn't respond within ${OLLAMA_TIMEOUT_MS/1000}s. It may still be loading the model into memory — try again in a moment, or use a smaller/faster model. You can switch to DEMO MODE to use the prototype without a model.`};
       if(e.kind==='UNREACHABLE') return {final:`Could not reach Ollama at 127.0.0.1:11434. Make sure it's installed and running (ollama serve). If this page isn't loaded from localhost, Ollama will also refuse the request unless you set OLLAMA_ORIGINS to include this site's origin. You can switch to DEMO MODE to use the prototype without a model.`};
       if(e.kind==='MODEL_NOT_FOUND') return {final:`Ollama is running, but the model "${model}" isn't pulled. Run: ollama pull ${model} — then try again. You can switch to DEMO MODE to use the prototype without a model.`};
@@ -633,32 +656,41 @@
     $('#consensusClose').onclick=()=>{ $('#consensusPanel').classList.remove('visible'); };
     $('#submit').onclick=async()=>{
       const q=$('#query').value.trim(); if(!q){$('#query').focus();return}
-      const btn=$('#submit'), engineVal=$('#engine').value;
+      const btn=$('#submit'), engineVal=$('#engine').value, lineVal=$('#strongLine').value;
+      const isOnboard=engineVal==='local'&&lineVal==='onboard';
       btn.disabled=true;btn.textContent='PARTITIONS PROCESSING…'; $('#state').textContent='PROCESSING';
       clearTimeout(revertTimer); document.querySelectorAll('.agent.non-lead,.agent.lead').forEach(a=>a.classList.remove('non-lead','lead'));
-      $('#consensusPanel').classList.remove('visible'); discussing(true);
+      $('#consensusPanel').classList.remove('visible');
+      let started=false;
       try {
         if(engineVal==='local'){
           $('.consensus').classList.remove('fixed-height');
-          const r=await consultLocal(q,$('#mode').value); render(r.synthesis,'CONFIDENCE / LOCAL CONSENSUS');
-        } else if(engineVal==='webllm'){
-          $('.consensus').classList.remove('fixed-height');
-          if(!window.MogiWebLLM.isReady()) await window.MogiWebLLM.init((p)=>{ $('#model').value=(p.progress!=null?Math.round(p.progress*100)+'%':(p.text||'LOADING…')); });
-          const r=await consultWebLLM(q,$('#mode').value); render(r.synthesis,'CONFIDENCE / ONBOARD CONSENSUS');
-          updateModelStyle();
+          if(isOnboard){
+            if(!window.MogiWebLLM.isReady()){
+              $('#consensusPanel').classList.add('visible'); showDirectLoading(true);
+              await window.MogiWebLLM.init(updateDirectLoading);
+              showDirectLoading(false);
+            }
+            started=true; discussing(true);
+            const r=await consultWebLLM(q,$('#mode').value); render(r.synthesis,'CONFIDENCE / ONBOARD CONSENSUS');
+          } else {
+            started=true; discussing(true);
+            const r=await consultLocal(q,$('#mode').value); render(r.synthesis,'CONFIDENCE / LOCAL CONSENSUS');
+          }
         } else {
+          started=true; discussing(true);
           $('.consensus').classList.add('fixed-height');
           await new Promise(r=>setTimeout(r,1800+Math.random()*600));
           const a=makeAnalysis(q,$('#mode').value); render(a.final,'CONFIDENCE '+a.conf);
         }
         $('#state').textContent='APPROVED'; revealConsensus();
       } catch(e) {
+        showDirectLoading(false);
         $('#state').textContent='OFFLINE'; const d=describeLocalError(e);
         $('#final').textContent=d.final; $('#final').classList.remove('empty');
-        $('#confidence').textContent='CONFIDENCE — '+(engineVal==='webllm'?'ONBOARD MODEL OFFLINE':'LOCAL MODEL OFFLINE');
+        $('#confidence').textContent='CONFIDENCE — '+(isOnboard?'ONBOARD LINE OFFLINE':'LOCAL MODEL OFFLINE');
         updateWingReadout(); revealConsensus();
-        if(engineVal==='webllm') updateModelStyle();
-      } finally {discussing(false);btn.disabled=false;btn.textContent='RUN NEW CONSULTATION';}
+      } finally {if(started) discussing(false); btn.disabled=false;btn.textContent='RUN NEW CONSULTATION';}
     };
     function positionTopRule(){ const rule=$('#topRule'),topbar=document.querySelector('.topbar'),mainEl=document.querySelector('main'); if(!rule||!topbar||!mainEl) return; const mainRect=mainEl.getBoundingClientRect(),tbRect=topbar.getBoundingClientRect(); rule.style.top=(tbRect.bottom-mainRect.top+6)+'px'; }
     function layoutAll(){ layoutMagi(); positionTopRule(); }
