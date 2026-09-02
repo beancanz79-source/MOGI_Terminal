@@ -10,6 +10,8 @@
     * { box-sizing:border-box; } html{filter:blur(.07px);} body { margin:0; min-height:100vh; background:var(--bg-body); color:var(--paper); font-family:var(--font-small); }
     #bootScreen{position:fixed;inset:0;z-index:99999;background:#000;overflow:hidden;}
     #bootCode{margin:0;padding:40px 32px;color:var(--amber);font:11px/1.5 var(--font-small);white-space:pre-wrap;word-break:break-all;}
+    #bootCode.align-right{text-align:right;}
+    #bootCode .boxed{display:inline-block;border:1px solid var(--amber);padding:0 3px;}
     #bootScreen.done{display:none;}
     .edge-blur{position:fixed;inset:0;z-index:9997;pointer-events:none;backdrop-filter:blur(.4px);-webkit-backdrop-filter:blur(.4px);mask-image:radial-gradient(ellipse 60% 60% at 50% 50%,transparent 0%,black 100%);-webkit-mask-image:radial-gradient(ellipse 60% 60% at 50% 50%,transparent 0%,black 100%);}
     body:before{content:"";position:fixed;inset:0;z-index:9999;pointer-events:none;background:radial-gradient(ellipse 75% 75% at 50% 50%,transparent 60%,rgba(0,0,0,.18) 100%);}
@@ -493,7 +495,7 @@
       if(typeof data.response!=='string'){ const err=new Error('The local model returned no text.'); err.kind='BAD_RESPONSE'; throw err; }
       return data.response.trim();
     }
-    async function consultLocal(q,mode){ const common=`You are one partition of a fictional three-mind decision system. Answer the user inquiry directly and specifically. Decision mode: ${mode}. Do not mention being an AI. Keep it under 125 words. Inquiry: ${q}`; const roles=[`You are EC-31, a rigorous systems scientist. Focus on evidence, uncertainty, trade-offs, and tests. End with a vote: YES, NO, or CONDITIONAL.`, `You are RS-27, a compassionate humanist. Focus on values, wellbeing, relationships, and lived consequences. End with a vote: YES, NO, or CONDITIONAL.`, `You are JM-21, a practical decisive strategist. Focus on agency, timing, leverage, and the next concrete action. End with a vote: YES, NO, or CONDITIONAL.`]; const analyses=await Promise.all(roles.map(role=>askLocal(role+'\n\n'+common))); const raw=await askLocal(`You are the MOGI consensus protocol. Given this inquiry and three independent reports, state a concise, useful final recommendation in 2–4 sentences. Name conditions or a next step. Do not mention AI or the reports. On a final separate line, write LEAD: followed by exactly one of EC-31, RS-27, or JM-21—the partition whose reasoning most shaped the outcome.\n\nInquiry: ${q}\n\nEC-31: ${analyses[0]}\n\nRS-27: ${analyses[1]}\n\nJM-21: ${analyses[2]}`); const match=raw.match(/(?:^|\n)LEAD:\s*(EC-31|RS-27|JM-21)\s*$/i); return {analyses,synthesis:raw.replace(/(?:^|\n)LEAD:\s*(EC-31|RS-27|JM-21)\s*$/i,'').trim(),lead:match?match[1]:'EC-31'}; }
+    async function consultLocal(q,mode){ const common=`You are one partition of a fictional three-mind decision system. Answer the user inquiry directly and specifically. Decision mode: ${mode}. Do not mention being an AI. Keep it under 125 words. Inquiry: ${q}`; const roles=[`You are EC-31, a rigorous systems scientist. Focus on evidence, uncertainty, trade-offs, and tests. End with a vote: YES, NO, or CONDITIONAL.`, `You are RS-27, a compassionate humanist. Focus on values, wellbeing, relationships, and lived consequences. End with a vote: YES, NO, or CONDITIONAL.`, `You are JM-21, a practical decisive strategist. Focus on agency, timing, leverage, and the next concrete action. End with a vote: YES, NO, or CONDITIONAL.`]; const analyses=await Promise.all(roles.map(role=>askLocal(role+'\n\n'+common))); const raw=await askLocal(`You are the MOGI consensus protocol. Given this inquiry and three independent reports, state a concise, useful final recommendation in 2–4 sentences. Name conditions or a next step. Do not mention AI or the reports. On a final separate line, write LEAD: followed by exactly one of EC-31, RS-27, or JM-21—the partition whose reasoning most shaped the outcome.\n\nInquiry: ${q}\n\nEC-31: ${analyses[0]}\n\nRS-27: ${analyses[1]}\n\nJM-21: ${analyses[2]}`); const match=raw.match(/(?:^|\n|\s)LEAD:\s*(EC-31|RS-27|JM-21)\s*$/i); return {analyses,synthesis:raw.replace(/(?:^|\n|\s)LEAD:\s*(EC-31|RS-27|JM-21)\s*$/i,'').trim(),lead:match?match[1]:'EC-31'}; }
     try{ const savedModel=localStorage.getItem('mogiModel'); if(savedModel) $('#model').value=savedModel; const savedEngine=localStorage.getItem('mogiEngine'); if(savedEngine) $('#engine').value=savedEngine; }catch{}
     function updateModelStyle(){ $('#model').classList.toggle('outline',$('#engine').value==='local'); }
     $('#engine').onchange=()=>{ updateModelStyle(); try{ localStorage.setItem('mogiEngine',$('#engine').value); }catch{} };
@@ -544,15 +546,21 @@
       const screen=$('#bootScreen'), codeEl=$('#bootCode');
       if(!screen||!codeEl) return;
       const finish=()=>screen.classList.add('done');
+      const escapeHtml=(s)=>s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+      const isImportant=(line)=>/\bfunction\s|const\s+[A-Z][A-Z0-9_]{2,}\s*=|MOGI/.test(line);
       fetch(window.location.href).then(r=>r.text()).then(src=>{
-        codeEl.textContent=src;
+        codeEl.innerHTML=src.split('\n').map(line=>{
+          const esc=escapeHtml(line);
+          return isImportant(line)?`<span class="boxed">${esc||' '}</span>`:esc;
+        }).join('\n');
         requestAnimationFrame(()=>{
           const dist=codeEl.scrollHeight;
           if(!dist){ finish(); return; }
           codeEl.addEventListener('transitionend',finish,{once:true});
-          codeEl.style.transition='transform 2s linear';
+          codeEl.style.transition='transform 3s linear';
           codeEl.style.transform=`translateY(-${dist}px)`;
-          setTimeout(finish,2400);
+          setTimeout(()=>{ codeEl.classList.add('align-right'); },1500);
+          setTimeout(finish,3400);
         });
       }).catch(finish);
     })();
