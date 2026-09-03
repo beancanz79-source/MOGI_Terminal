@@ -6,7 +6,7 @@
   <meta name="color-scheme" content="dark" />
   <title>MOGI / Terminal</title>
   <style>
-    @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Noto+Serif+Tagalog&family=Noto+Sans+Tagalog&display=swap');
     :root { --ink:#101110; --paper:#F76C1B; --line:#F76C1B; --red:#F76C1B; --rust:#2f6843; --amber:#F76C1B; --cyan:#F76C1B; --triangle:#F76C1B; --triangle-rgb:247,108,27; --muted:#F76C1B; --box-idle:#2596be; --box-idle-rgb:37,150,190; --box-hover:#39BEEF; --box-hover-rgb:57,190,239; --wing-color:#38B556; --bg-body:#090A09; --bg-aside:#0E0F0D; --bg-input:#161715; --bg-main:#0B0C0B; --border-input:#F76C1B; --border-module:#F76C1B; --border-topbar:#F76C1B; --text-status:#F76C1B; --send-hover:#FFCC33; --consensus-tint-rgb:53,226,173; --font-big:'Helvetica Neue',Helvetica,Arial,sans-serif; --font-small:'IBM Plex Mono',monospace; --font-accent:'Georgia Pro Condensed',Georgia,serif; }
     :root{color-scheme:dark;}
     #customCursor{display:none;position:fixed;top:0;left:0;width:18px;height:18px;border-radius:50%;background:var(--amber);mix-blend-mode:difference;pointer-events:none;z-index:2147483647;transform:translate(-50%,-50%);}
@@ -18,9 +18,8 @@
     #preScreen .ambience-toggle input{width:16px;height:16px;}
     #preScreenEnter{width:180px;}
     #bootScreen{position:fixed;inset:0;z-index:99999;background:#000;overflow:hidden;}
-    #bootSymbol{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);z-index:2;color:var(--ink);-webkit-text-stroke:1.5px var(--amber);paint-order:stroke fill;font-family:'Times New Roman',Times,Georgia,serif;font-style:italic;font-weight:900;line-height:1;font-size:30vw;pointer-events:none;}
-    #bootSymbol::after{content:"";position:absolute;left:23%;bottom:-9%;width:.22em;height:.055em;background:var(--ink);border:1.5px solid var(--amber);box-sizing:border-box;transform:translate(-50%,0) rotate(-17deg);clip-path:polygon(0% 50%,20% 0%,80% 0%,100% 50%,80% 100%,20% 100%);}
-    @media (max-width:600px){ #bootSymbol{font-size:74.9vw;} }
+    #bootSymbol{position:absolute;top:50%;left:50%;transform:translate(-50%,calc(-50% - 3%)) scaleX(.68);z-index:2;color:var(--ink);-webkit-text-stroke:1.5px var(--amber);paint-order:stroke fill;font-family:Copperplate,'Copperplate Gothic Bold',serif;font-weight:700;line-height:1;font-size:43.2vw;pointer-events:none;}
+    @media (max-width:600px){ #bootSymbol{font-size:108vw;} }
     #bootCode{margin:0;padding:40px 32px;color:var(--amber);font:11px/1.5 var(--font-small);white-space:pre-wrap;word-break:break-all;}
     #bootCode.align-right{text-align:right;}
     #bootCode .boxed{display:inline-block;border:1px solid var(--amber);padding:0 3px;}
@@ -87,10 +86,10 @@
     .baybayin.left{transform:translateX(-100%);}
     .baybayin.right{transform:translateX(0);}
     .baybayin .line{position:relative;height:16.5px;}
-    .baybayin .line:before,.baybayin .line:after{content:"";position:absolute;left:0;right:0;height:6px;border:2px solid var(--wing-color);box-sizing:border-box;}
+    .baybayin .line:before,.baybayin .line:after{content:"";position:absolute;left:0;right:0;height:4px;border:2px solid var(--wing-color);box-sizing:border-box;}
     .baybayin .line:before{top:0;}
     .baybayin .line:after{bottom:0;}
-    .baybayin .glyph{font:900 26px 'Baybayin Deko','Malamaya Baybayin','matatas 1','Noto Sans Tagalog',sans-serif;line-height:1;color:var(--triangle);text-shadow:0 0 10px rgba(var(--triangle-rgb),.7);-webkit-text-stroke:1.4px var(--triangle);paint-order:stroke fill;white-space:nowrap;}
+    .baybayin .glyph{font:900 26px 'Noto Serif Tagalog','Noto Sans Tagalog',sans-serif;line-height:1;color:var(--triangle);text-shadow:0 0 10px rgba(var(--triangle-rgb),.7);-webkit-text-stroke:1.4px var(--triangle);paint-order:stroke fill;white-space:nowrap;}
     .wing-readout{position:absolute;z-index:2;display:flex;flex-direction:column;align-items:flex-start;justify-content:center;gap:4px;text-align:left;color:var(--amber);font:700 11px/1 var(--font-small);letter-spacing:.03em;pointer-events:none;white-space:nowrap;}
     .agents.discussing .agent,.agents.discussing .agent:before{transition:none;}
     .agent.flash-off{filter:drop-shadow(0 0 0 rgba(0,0,0,0)) drop-shadow(0 0 10px rgba(var(--triangle-rgb),.7));}
