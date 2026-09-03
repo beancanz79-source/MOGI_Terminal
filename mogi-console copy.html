@@ -19,6 +19,7 @@
     #preScreenEnter{width:180px;}
     #bootScreen{position:fixed;inset:0;z-index:99999;background:#000;overflow:hidden;}
     #bootSymbol{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);z-index:2;color:var(--ink);-webkit-text-stroke:1.5px var(--amber);paint-order:stroke fill;font-family:'Times New Roman',Times,Georgia,serif;font-style:italic;font-weight:900;line-height:1;font-size:30vw;pointer-events:none;}
+    #bootSymbol::after{content:"";position:absolute;left:23%;bottom:-9%;width:.22em;height:.055em;background:var(--ink);border:1.5px solid var(--amber);box-sizing:border-box;transform:translate(-50%,0) rotate(-17deg);clip-path:polygon(0% 50%,20% 0%,80% 0%,100% 50%,80% 100%,20% 100%);}
     @media (max-width:600px){ #bootSymbol{font-size:74.9vw;} }
     #bootCode{margin:0;padding:40px 32px;color:var(--amber);font:11px/1.5 var(--font-small);white-space:pre-wrap;word-break:break-all;}
     #bootCode.align-right{text-align:right;}
