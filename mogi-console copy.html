@@ -18,9 +18,9 @@
     #preScreen .ambience-toggle input{width:16px;height:16px;}
     #preScreenEnter{width:180px;}
     #bootScreen{position:fixed;inset:0;z-index:99999;background:#000;overflow:hidden;}
-    #bootSymbol{position:absolute;top:50%;left:50%;width:43.2vw;height:43.2vw;transform:translate(-50%,-50%) scaleX(.68);z-index:2;overflow:visible;pointer-events:none;}
+    #bootSymbol{position:absolute;top:50%;left:50%;width:43.2vw;height:43.2vw;transform:translate(calc(-50% - 14px),-50%) scaleX(.68);z-index:2;overflow:visible;pointer-events:none;}
     #bootSymbol text{font-family:Copperplate,'Copperplate Gothic Bold',serif;font-style:italic;font-weight:700;font-size:85px;fill:var(--ink);stroke:var(--amber);stroke-width:1px;paint-order:stroke fill;}
-    @media (max-width:600px){ #bootSymbol{width:108vw;height:108vw;} }
+    @media (max-width:600px){ #bootSymbol{width:108vw;height:108vw;transform:translate(-50%,-50%) scaleX(.68);} }
     #bootCode{margin:0;padding:40px 32px;color:var(--amber);font:11px/1.5 var(--font-small);white-space:pre-wrap;word-break:break-all;}
     #bootCode.align-right{text-align:right;}
     #bootCode .boxed{display:inline-block;border:1px solid var(--amber);padding:0 3px;}
@@ -557,17 +557,24 @@
       return data.response.trim();
     }
     function buildConsultPrompts(q,mode){
-      const common=`You are one partition of a fictional three-mind decision system. Answer the user inquiry directly and specifically, in a wise, formal, concrete tone — grounded and kind, never vague or hedging for its own sake. Do not moralize, lecture, add disclaimers, or comment on the user's tone or word choice — mild language, slang, or profanity in the inquiry is not a concern and does not need to be addressed; just engage with the actual substance of the inquiry. Decision mode: ${mode}. Do not mention being an AI. Keep it under 125 words. Inquiry: ${q}`;
-      const roles=[`You are EC-31, a rigorous systems scientist. Focus on evidence, uncertainty, trade-offs, and tests. End with a vote: YES, NO, or CONDITIONAL.`, `You are RS-27, a compassionate humanist. Focus on values, wellbeing, relationships, and lived consequences. End with a vote: YES, NO, or CONDITIONAL.`, `You are JM-21, a practical decisive strategist. Focus on agency, timing, leverage, and the next concrete action. End with a vote: YES, NO, or CONDITIONAL.`];
+      const common=`You are one partition of a fictional three-mind decision system. Address the person asking as "you" — you are their advisor, not them. Never say "I" or "my" to mean the user's own life, choices, or feelings. If the inquiry mentions another person, refer to that person by their own pronoun (she/he/they) — never blend that person's situation into "I" or "my". Answer the user inquiry directly and specifically, in a wise, formal, concrete tone — grounded and kind, never vague or hedging for its own sake. Use as few words as possible — only what is strictly necessary to form a complete, clear sentence. No filler, no elaboration, no restating the question. Never answer with just yes or no, even if the inquiry could be read as a yes/no question — give the minimal substantive reasoning instead. If the inquiry concerns something inherently uncertain or unknowable — another person's future feelings, choices, or actions, fate, timing no one can verify — answer with measured hope and honesty, the way a doctor gives a compassionate but honest prognosis: never promise or guarantee an outcome you cannot know. If the inquiry is factual or knowable, be direct and accurate — do not hedge or fabricate. Do not moralize, lecture, add disclaimers, or comment on the user's tone or word choice — mild language, slang, or profanity in the inquiry is not a concern and does not need to be addressed; just engage with the actual substance of the inquiry. Decision mode: ${mode}. Do not mention being an AI. Keep it under 30 words. Inquiry: ${q}`;
+      const roles=[`You are EC-31, a rigorous systems scientist. Focus on evidence, uncertainty, trade-offs, and tests.`, `You are RS-27, a compassionate humanist. Focus on values, wellbeing, relationships, and lived consequences.`, `You are JM-21, a practical decisive strategist. Focus on agency, timing, leverage, and the next concrete action.`];
       const prompts=roles.map(role=>role+'\n\n'+common);
-      const synthesisPrompt=(analyses)=>`You are the MOGI consensus protocol. Given this inquiry and three independent reports, state a concise, useful final recommendation in 2–4 sentences, in a wise, formal, concrete tone — grounded and kind, never vague. Name conditions or a next step. Do not mention AI or the reports. Do not moralize, lecture, add disclaimers, or comment on the user's tone or word choice — mild language, slang, or profanity in the inquiry is not a concern. Write the recommendation only — no headings, no labels, no restating these instructions. Then, as the very last line and nothing else on it, write exactly one of: LEAD: EC-31 or LEAD: RS-27 or LEAD: JM-21 — whichever partition's reasoning most shaped the outcome. Do not explain that line.\n\nInquiry: ${q}\n\nEC-31: ${analyses[0]}\n\nRS-27: ${analyses[1]}\n\nJM-21: ${analyses[2]}`;
+      const synthesisPrompt=(analyses)=>`You are the MOGI consensus protocol. Below are three independent internal analyses, each under its own internal code name. Read them, then write ONE final recommendation directly to the user in your own words. Address the user as "you" — never say "I" or "my" to mean the user's own life, choices, or feelings; if the inquiry mentions another person, refer to that person by their own pronoun, never blend them into "I"/"my". Never mention, name, list, quote, or explain EC-31, RS-27, or JM-21 anywhere in your answer, and never say which one "because" of anything — those are internal labels the user must never see; write only the recommendation itself, as if you reasoned it out yourself in one voice. State the recommendation AND the single most important reason for it, in 1–2 short sentences, in a wise, formal, concrete tone — grounded and kind, never vague. The decision alone is not enough — always include the core reason, as briefly as possible. Use as few words as possible — only what is strictly necessary, no filler. Never answer with just yes or no, even if the inquiry could be read as a yes/no question. If the inquiry concerns something inherently uncertain or unknowable, answer with measured hope and honesty, like a doctor giving a compassionate but honest prognosis — never promise or guarantee an outcome no one can know. If it is factual or knowable, be direct and accurate. Name a condition or next step only if it fits within the sentence budget. Do not mention AI or the reports. Do not moralize, lecture, add disclaimers, or comment on the user's tone or word choice — mild language, slang, or profanity in the inquiry is not a concern. Write the recommendation only — no headings, no labels, no restating these instructions. Then include two short machine-readable markers after your recommendation, each on its own line: first, write exactly one of LEAD: EC-31 or LEAD: RS-27 or LEAD: JM-21 — whichever internal analysis most shaped the outcome; second, write CONFIDENCE: followed by a whole number from 0 to 100 with no decimals and no percent sign, representing how confident you are in this recommendation. Do not explain either marker, and do not reference them anywhere else in your answer.\n\nInquiry: ${q}\n\nInternal analysis 1 (EC-31): ${analyses[0]}\n\nInternal analysis 2 (RS-27): ${analyses[1]}\n\nInternal analysis 3 (JM-21): ${analyses[2]}`;
       return {prompts,synthesisPrompt};
     }
     function parseLeadResponse(raw){
       const nameMatch=raw.match(/LEAD:\s*(EC-31|RS-27|JM-21)/i);
-      const cleaned=raw.replace(/^[ \t]*LEAD:.*$/im,'').replace(/\n{3,}/g,'\n\n').trim();
-      return {synthesis:cleaned||raw.trim(),lead:nameMatch?nameMatch[1]:'EC-31'};
+      const confMatch=raw.match(/CONFIDENCE:\s*(\d{1,3})/i);
+      let cleaned=raw;
+      [nameMatch,confMatch].filter(Boolean).sort((a,b)=>b.index-a.index).forEach(m=>{
+        cleaned=cleaned.slice(0,m.index)+cleaned.slice(m.index+m[0].length);
+      });
+      cleaned=cleaned.replace(/\n{3,}/g,'\n\n').replace(/[ \t]{2,}/g,' ').trim();
+      const confidence=confMatch?Math.max(0,Math.min(100,parseInt(confMatch[1],10))):null;
+      return {synthesis:cleaned||raw.trim(),lead:nameMatch?nameMatch[1]:'EC-31',confidence};
     }
+    const confLabel=(c)=>c!=null?'CONFIDENCE / '+c+'%':'CONFIDENCE / —';
     async function consultLocal(q,mode){
       const {prompts,synthesisPrompt}=buildConsultPrompts(q,mode);
       const analyses=await Promise.all(prompts.map(p=>askLocal(p)));
@@ -673,10 +680,10 @@
               showDirectLoading(false);
             }
             started=true; discussing(true);
-            const r=await consultWebLLM(q,$('#mode').value); render(r.synthesis,'CONFIDENCE / ONBOARD CONSENSUS');
+            const r=await consultWebLLM(q,$('#mode').value); render(r.synthesis,confLabel(r.confidence));
           } else {
             started=true; discussing(true);
-            const r=await consultLocal(q,$('#mode').value); render(r.synthesis,'CONFIDENCE / LOCAL CONSENSUS');
+            const r=await consultLocal(q,$('#mode').value); render(r.synthesis,confLabel(r.confidence));
           }
         } else {
           started=true; discussing(true);
@@ -714,33 +721,31 @@
           const dist=codeEl.scrollHeight;
           if(!dist){ finish(); return; }
           const lineHeight=parseFloat(getComputedStyle(codeEl).lineHeight)||16;
-          const jitterLines=Math.min(12,Math.floor(dist/lineHeight));
-          const jitterDist=jitterLines*lineHeight;
-          const jitterDuration=900, smoothDuration=1900;
-          const safety=setTimeout(finish,jitterDuration+smoothDuration+2000);
-          let cum=0;
-          const schedule=Array.from({length:jitterLines},()=>.5+Math.random()).map((w,idx,arr)=>{
-            const total=arr.reduce((a,b)=>a+b,0);
-            cum+=w;
-            return (cum/total)*jitterDuration;
-          });
+          const totalLines=Math.max(1,Math.ceil(dist/lineHeight));
+          const phases=[
+            {lines:Math.min(totalLines,8), interval:140},
+            {lines:Math.min(Math.max(0,totalLines-8),12), interval:27}
+          ];
+          const schedule=[]; let t=0, lines=0;
+          for(const p of phases){ for(let i=0;i<p.lines;i++){ t+=p.interval; lines++; schedule.push([t,lines]); } }
+          const alignAt=t;
+          const remaining=Math.max(0,totalLines-lines);
+          const p3Interval=24, p3Duration=1516;
+          const p3Jumps=Math.max(1,Math.round(p3Duration/p3Interval));
+          const p3LinesPerJump=Math.max(1,Math.ceil(remaining/p3Jumps));
+          while(lines<totalLines){ t+=p3Interval; lines=Math.min(totalLines,lines+p3LinesPerJump); schedule.push([t,lines]); }
+          const safety=setTimeout(finish,t+2000);
           const start=performance.now();
-          let shownLines=0, alignedYet=false;
+          let idx=0, aligned=false;
           const frame=(now)=>{
             if(finished) return;
             const elapsed=now-start;
-            if(elapsed<jitterDuration){
-              while(shownLines<jitterLines && elapsed>=schedule[shownLines]) shownLines++;
-              codeEl.style.transform=`translateY(-${Math.min(jitterDist,shownLines*lineHeight)}px)`;
-              requestAnimationFrame(frame);
-            } else {
-              if(!alignedYet){ alignedYet=true; codeEl.classList.add('align-right'); }
-              const t=Math.min(1,(elapsed-jitterDuration)/smoothDuration);
-              const eased=t*t*t;
-              codeEl.style.transform=`translateY(-${jitterDist+(dist-jitterDist)*eased}px)`;
-              if(t<1) requestAnimationFrame(frame);
-              else { clearTimeout(safety); finish(); }
-            }
+            while(idx<schedule.length && elapsed>=schedule[idx][0]) idx++;
+            const shown=idx>0?schedule[idx-1][1]:0;
+            codeEl.style.transform=`translateY(-${Math.min(dist,shown*lineHeight)}px)`;
+            if(!aligned && elapsed>=alignAt){ aligned=true; codeEl.classList.add('align-right'); }
+            if(idx>=schedule.length){ clearTimeout(safety); finish(); return; }
+            requestAnimationFrame(frame);
           };
           requestAnimationFrame(frame);
         });
