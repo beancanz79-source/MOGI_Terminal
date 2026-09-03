@@ -18,7 +18,7 @@
     #preScreen .ambience-toggle input{width:16px;height:16px;}
     #preScreenEnter{width:180px;}
     #bootScreen{position:fixed;inset:0;z-index:99999;background:#000;overflow:hidden;}
-    #bootSymbol{position:absolute;top:50%;left:50%;transform:translate(-50%,calc(-50% - 3%)) scaleX(.68);z-index:2;color:var(--ink);-webkit-text-stroke:1.5px var(--amber);paint-order:stroke fill;font-family:Copperplate,'Copperplate Gothic Bold',serif;font-weight:700;line-height:1;font-size:43.2vw;pointer-events:none;}
+    #bootSymbol{position:absolute;top:50%;left:50%;transform:translate(-50%,calc(-50% - 3%)) scaleX(.68);z-index:2;color:var(--ink);-webkit-text-stroke:1.5px var(--amber);paint-order:stroke fill;font-family:Copperplate,'Copperplate Gothic Bold',serif;font-style:italic;font-weight:700;line-height:1;font-size:43.2vw;pointer-events:none;}
     @media (max-width:600px){ #bootSymbol{font-size:108vw;} }
     #bootCode{margin:0;padding:40px 32px;color:var(--amber);font:11px/1.5 var(--font-small);white-space:pre-wrap;word-break:break-all;}
     #bootCode.align-right{text-align:right;}
@@ -86,7 +86,7 @@
     .baybayin.left{transform:translateX(-100%);}
     .baybayin.right{transform:translateX(0);}
     .baybayin .line{position:relative;height:16.5px;}
-    .baybayin .line:before,.baybayin .line:after{content:"";position:absolute;left:0;right:0;height:4px;border:2px solid var(--wing-color);box-sizing:border-box;}
+    .baybayin .line:before,.baybayin .line:after{content:"";position:absolute;left:0;right:0;height:6px;border:2px solid var(--wing-color);box-sizing:border-box;}
     .baybayin .line:before{top:0;}
     .baybayin .line:after{bottom:0;}
     .baybayin .glyph{font:900 26px 'Noto Serif Tagalog','Noto Sans Tagalog',sans-serif;line-height:1;color:var(--triangle);text-shadow:0 0 10px rgba(var(--triangle-rgb),.7);-webkit-text-stroke:1.4px var(--triangle);paint-order:stroke fill;white-space:nowrap;}
