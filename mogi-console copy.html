@@ -18,9 +18,9 @@
     #preScreen .ambience-toggle input{width:16px;height:16px;}
     #preScreenEnter{width:180px;}
     #bootScreen{position:fixed;inset:0;z-index:99999;background:#000;overflow:hidden;}
-    #bootSymbol{position:absolute;top:50%;left:50%;width:43.2vw;height:43.2vw;transform:translate(calc(-50% - 22px),-50%) scaleX(.68);z-index:2;overflow:visible;pointer-events:none;}
+    #bootSymbol{position:absolute;top:50%;left:50%;width:43.2vw;height:43.2vw;transform:translate(calc(-50% - 22px),calc(-50% - 25px)) scaleX(.68);z-index:2;overflow:visible;pointer-events:none;}
     #bootSymbol text{font-family:'Playfair Display',Copperplate,'Copperplate Gothic Bold',serif;font-style:italic;font-weight:700;font-size:85px;fill:var(--ink);stroke:var(--amber);stroke-width:1px;paint-order:stroke fill;}
-    @media (max-width:600px){ #bootSymbol{width:108vw;height:108vw;transform:translate(-50%,-50%) scaleX(.68);} }
+    @media (max-width:600px){ #bootSymbol{width:108vw;height:108vw;transform:translate(-50%,calc(-50% - 25px)) scaleX(.68);} }
     #bootCode{margin:0;padding:40px 32px;color:var(--amber);font:11px/1.5 var(--font-small);white-space:pre-wrap;word-break:break-all;}
     #bootCode.align-right{text-align:right;}
     #bootCode .boxed{display:inline-block;border:1px solid var(--amber);padding:0 3px;}
@@ -137,7 +137,7 @@
     </main></div>
     <div class="xselect-backdrop" id="xselectBackdrop" aria-hidden="true"></div>
   <script type="module">
-    import * as webllm from 'https://esm.run/@mlc-ai/web-llm';
+    import * as webllm from 'https://esm.run/@mlc-ai/web-llm@0.2.84';
     let enginePromise=null, engineReady=false, chosenModelId=null;
     function paramCountB(id){
       const m=id.match(/-(\d+(?:\.\d+)?)([BM])-/);
@@ -708,13 +708,16 @@
       const needsDownload=engineVal==='local'&&lineVal==='onboard'&&window.MogiWebLLM&&window.MogiWebLLM.supported&&!window.MogiWebLLM.isReady();
       let downloadProgress=0, downloadSettled=false;
       if(needsDownload){
-        window.MogiWebLLM.init(p=>{ if(p&&p.progress!=null) downloadProgress=Math.max(0,Math.min(1,p.progress)); }).then(
-          ()=>{ downloadProgress=1; downloadSettled=true; },
-          ()=>{
-            try{ const eng=$('#engine'); if(eng){ eng.value='demo'; eng.dispatchEvent(new Event('change')); } }catch{}
-            downloadProgress=1; downloadSettled=true;
-          }
-        );
+        const fallbackToDemo=()=>{
+          try{ const eng=$('#engine'); if(eng){ eng.value='demo'; eng.dispatchEvent(new Event('change')); } }catch{}
+          downloadProgress=1; downloadSettled=true;
+        };
+        try{
+          window.MogiWebLLM.init(p=>{ if(p&&p.progress!=null) downloadProgress=Math.max(0,Math.min(1,p.progress)); }).then(
+            ()=>{ downloadProgress=1; downloadSettled=true; },
+            fallbackToDemo
+          );
+        }catch{ fallbackToDemo(); }
       }
       fetch(window.location.href).then(r=>r.text()).then(src=>{
         codeEl.innerHTML=src.split('\n').map(line=>{
