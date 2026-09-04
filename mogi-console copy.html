@@ -85,8 +85,8 @@
     .baybayin .line.bottom{margin-top:2px;}
     .baybayin.left{transform:translateX(-100%);}
     .baybayin.right{transform:translateX(0);}
-    .baybayin .line{position:relative;height:14px;}
-    .baybayin .line:before,.baybayin .line:after{content:"";position:absolute;left:0;right:0;height:6px;border:2px solid var(--wing-color);box-sizing:border-box;}
+    .baybayin .line{position:relative;height:11px;}
+    .baybayin .line:before,.baybayin .line:after{content:"";position:absolute;left:0;right:0;height:5px;border:2px solid var(--wing-color);box-sizing:border-box;}
     .baybayin .line:before{top:0;}
     .baybayin .line:after{bottom:0;}
     .baybayin .glyph{font:900 26px 'Noto Serif Tagalog','Noto Sans Tagalog',sans-serif;line-height:1;color:var(--triangle);text-shadow:0 0 10px rgba(var(--triangle-rgb),.7);-webkit-text-stroke:1.4px var(--triangle);paint-order:stroke fill;white-space:nowrap;}
@@ -479,7 +479,7 @@
           const avail=Math.max(10,lineLen-pad*2);
           const currentWidth=glyph.getBoundingClientRect().width;
           const currentSize=parseFloat(getComputedStyle(glyph).fontSize);
-          glyph.style.fontSize=Math.max(8,currentSize*(avail/currentWidth)-3)+'px';
+          glyph.style.fontSize=Math.max(8,currentSize*(avail/currentWidth)-7)+'px';
         };
         fillGlyph(baybayinL,leftLen); fillGlyph(baybayinR,rightLen);
         if(isNarrow){
@@ -553,33 +553,36 @@
       const common=`You are one partition of a fictional three-mind decision system. Address the person asking as "you" — you are their advisor, not them. Never say "I" or "my" to mean the user's own life, choices, or feelings. If the inquiry mentions another person, refer to that person by their own pronoun (she/he/they) — never blend that person's situation into "I" or "my". Answer the user inquiry directly and specifically, in a wise, formal, concrete tone — grounded and kind, never vague or hedging for its own sake. Use as few words as possible — only what is strictly necessary to form a complete, clear sentence. No filler, no elaboration, no restating the question. Never answer with just yes or no, even if the inquiry could be read as a yes/no question — give the minimal substantive reasoning instead. If the inquiry concerns something inherently uncertain or unknowable — another person's future feelings, choices, or actions, fate, timing no one can verify — answer with measured hope and honesty, the way a doctor gives a compassionate but honest prognosis: never promise or guarantee an outcome you cannot know. If the inquiry is factual or knowable, be direct and accurate — do not hedge or fabricate. Do not moralize, lecture, add disclaimers, or comment on the user's tone or word choice — mild language, slang, or profanity in the inquiry is not a concern and does not need to be addressed; just engage with the actual substance of the inquiry. Decision mode: ${mode}. Do not mention being an AI. Keep it under 30 words. Inquiry: ${q}`;
       const roles=[`You are EC-31, a rigorous systems scientist. Focus on evidence, uncertainty, trade-offs, and tests.`, `You are RS-27, a compassionate humanist. Focus on values, wellbeing, relationships, and lived consequences.`, `You are JM-21, a practical decisive strategist. Focus on agency, timing, leverage, and the next concrete action.`];
       const prompts=roles.map(role=>role+'\n\n'+common);
-      const synthesisPrompt=(analyses)=>`You are the MOGI consensus protocol. Below are three independent internal analyses, each under its own internal code name. Read them, then write ONE final recommendation directly to the user in your own words. Address the user as "you" — never say "I" or "my" to mean the user's own life, choices, or feelings; if the inquiry mentions another person, refer to that person by their own pronoun, never blend them into "I"/"my". Never mention, name, list, quote, or explain EC-31, RS-27, or JM-21 anywhere in your answer, and never say which one "because" of anything — those are internal labels the user must never see; write only the recommendation itself, as if you reasoned it out yourself in one voice. State the recommendation AND the single most important reason for it, in 1–2 short sentences, in a wise, formal, concrete tone — grounded and kind, never vague. The decision alone is not enough — always include the core reason, as briefly as possible. Use as few words as possible — only what is strictly necessary, no filler. Never answer with just yes or no, even if the inquiry could be read as a yes/no question. If the inquiry concerns something inherently uncertain or unknowable, answer with measured hope and honesty, like a doctor giving a compassionate but honest prognosis — never promise or guarantee an outcome no one can know. If it is factual or knowable, be direct and accurate. Name a condition or next step only if it fits within the sentence budget. Do not mention AI or the reports. Do not moralize, lecture, add disclaimers, or comment on the user's tone or word choice — mild language, slang, or profanity in the inquiry is not a concern. Write the recommendation only, exactly once — no headings, no labels such as "Recommendation:", no restating these instructions, and do not repeat, restate, or rephrase the same statement again anywhere in your answer. Then include two short machine-readable markers after your recommendation, each on its own line: first, write exactly one of LEAD: EC-31 or LEAD: RS-27 or LEAD: JM-21 — whichever internal analysis most shaped the outcome; second, write CONFIDENCE: followed by a whole number from 0 to 100 with no decimals and no percent sign, representing how confident you are in this recommendation. Do not explain either marker, and do not reference them anywhere else in your answer.\n\nInquiry: ${q}\n\nInternal analysis 1 (EC-31): ${analyses[0]}\n\nInternal analysis 2 (RS-27): ${analyses[1]}\n\nInternal analysis 3 (JM-21): ${analyses[2]}`;
-      return {prompts,synthesisPrompt};
+      const synthesisPrompt=(analyses)=>`You are the MOGI consensus protocol. Below are three independent internal analyses, each under its own internal code name. Read them, then write a recommendation directly to the user in your own words, in exactly two sentences — what you'd do, and briefly why. Address the user as "you" — never say "I" or "my" to mean the user's own life, choices, or feelings; if the inquiry mentions another person, use that person's own pronoun, never blend them into "I"/"my". Never mention, name, list, quote, or explain EC-31, RS-27, or JM-21 anywhere in your answer — those are internal labels the user must never see; write only the recommendation itself, as if you reasoned it out yourself in one voice. Use as few words as possible. Never answer with just yes or no, even if the inquiry could be read as a yes/no question. If the inquiry concerns something inherently uncertain or unknowable, answer with measured hope and honesty, like a doctor giving a compassionate but honest prognosis — never promise or guarantee an outcome no one can know. If it is factual or knowable, be direct and accurate. Do not moralize, lecture, add disclaimers, or comment on the user's tone or word choice — mild language, slang, or profanity in the inquiry is not a concern. Do not mention AI or the reports, and do not say you are giving a "recommendation" or refer to "the analysis" — just state it directly, as a fact you know. Write exactly two sentences and nothing else — no preamble, no headings, no labels, no notes, no restating these instructions.\n\nInquiry: ${q}\n\nInternal analysis 1 (EC-31): ${analyses[0]}\n\nInternal analysis 2 (RS-27): ${analyses[1]}\n\nInternal analysis 3 (JM-21): ${analyses[2]}`;
+      const metaPrompt=(analyses,synthesis)=>`Below is a recommendation and the three internal analyses that led to it. Respond with EXACTLY two lines and nothing else — no explanation, no extra words:\nLEAD: <EC-31, RS-27, or JM-21>\nCONFIDENCE: <a whole number from 0 to 100>\n\nReplace each <...> with your answer. LEAD names whichever analysis most shaped the recommendation. CONFIDENCE is how confident you are that the recommendation is right. Output only those two lines.\n\nRecommendation: ${synthesis}\n\nInternal analysis 1 (EC-31): ${analyses[0]}\n\nInternal analysis 2 (RS-27): ${analyses[1]}\n\nInternal analysis 3 (JM-21): ${analyses[2]}`;
+      return {prompts,synthesisPrompt,metaPrompt};
     }
-    function parseLeadResponse(raw){
-      const nameMatch=raw.match(/LEAD:\s*(EC-31|RS-27|JM-21)/i);
-      const confMatch=raw.match(/CONFIDENCE:\s*(\d{1,3})/i);
-      let cleaned=raw;
-      [nameMatch,confMatch].filter(Boolean).sort((a,b)=>b.index-a.index).forEach(m=>{
-        cleaned=cleaned.slice(0,m.index)+cleaned.slice(m.index+m[0].length);
-      });
-      cleaned=cleaned.replace(/\s*(?:lead\s*analysis|recommendation)\s*:?\s*$/i,'');
-      cleaned=cleaned.replace(/\n{3,}/g,'\n\n').replace(/[ \t]{2,}/g,' ').trim();
-      const confidence=confMatch?Math.max(0,Math.min(100,parseInt(confMatch[1],10))):null;
-      return {synthesis:cleaned||raw.trim(),lead:nameMatch?nameMatch[1]:'EC-31',confidence};
+    function cleanSynthesis(raw){
+      let s=raw.replace(/^\s*(?:based on the (?:analysis|three analyses|internal analyses)[,:]?\s*|the recommendation is (?:that\s*)?)/i,'')
+        .replace(/\n+\s*(?:the\s+)?(?:single\s+)?(?:most\s+important\s+)?reason(?:\s+is)?:?\s*/gi,' ')
+        .replace(/\n{3,}/g,'\n\n').replace(/[ \t]{2,}/g,' ').trim();
+      if(s) s=s[0].toUpperCase()+s.slice(1);
+      return s||raw.trim();
+    }
+    function parseMeta(raw){
+      const nameMatch=raw.match(/LEAD:?\s*(EC-31|RS-27|JM-21)/i);
+      const confMatch=raw.match(/CONFIDENCE:?\s*(\d{1,3})/i)||raw.match(/(\d{1,3})\s*(?:\/\s*100|out of 100|%)/i)||raw.match(/(\d{1,3})/);
+      return {lead:nameMatch?nameMatch[1].toUpperCase():'EC-31',confidence:confMatch?Math.max(0,Math.min(100,parseInt(confMatch[1],10))):null};
     }
     const confLabel=(c)=>c!=null?'CONFIDENCE / '+c+'%':'CONFIDENCE / —';
     async function consultLocal(q,mode){
-      const {prompts,synthesisPrompt}=buildConsultPrompts(q,mode);
+      const {prompts,synthesisPrompt,metaPrompt}=buildConsultPrompts(q,mode);
       const analyses=await Promise.all(prompts.map(p=>askLocal(p)));
-      const raw=await askLocal(synthesisPrompt(analyses),.5);
-      return {analyses,...parseLeadResponse(raw)};
+      const synthesis=cleanSynthesis(await askLocal(synthesisPrompt(analyses),.5));
+      const meta=await askLocal(metaPrompt(analyses,synthesis),.2);
+      return {analyses,synthesis,...parseMeta(meta)};
     }
     async function consultWebLLM(q,mode){
-      const {prompts,synthesisPrompt}=buildConsultPrompts(q,mode);
+      const {prompts,synthesisPrompt,metaPrompt}=buildConsultPrompts(q,mode);
       const analyses=await Promise.all(prompts.map(p=>window.MogiWebLLM.chat(p)));
-      const raw=await window.MogiWebLLM.chat(synthesisPrompt(analyses),.5);
-      return {analyses,...parseLeadResponse(raw)};
+      const synthesis=cleanSynthesis(await window.MogiWebLLM.chat(synthesisPrompt(analyses),.5));
+      const meta=await window.MogiWebLLM.chat(metaPrompt(analyses,synthesis),.2);
+      return {analyses,synthesis,...parseMeta(meta)};
     }
     let savedLocalModelName='qwen2.5:3b';
     try{
